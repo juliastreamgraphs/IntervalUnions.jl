@@ -239,11 +239,11 @@ function disjoint(i1::Interval, i2::Interval)
 	i1 == i2 && false
 	if i1 < i2
 		if right(i1) < left(i2)
-			true
+			return true
 		elseif right(i1) == left(i2)
-			(i1.open_right || i2.open_left) ? true : false
+			(i1.open_right || i2.open_left) ? (return true) : (return false)
 		else
-			false
+			return false
 		end
 	else
 		disjoint(i2,i1)
@@ -368,7 +368,7 @@ Returns true if x ∈ iu and false if x ∉ iu.
 function ∈(x::Real, iu::IntervalUnion)
 	for i in iu.components
 		if x ∈ i
-			true
+			return true
 		end
 	end
 	false
@@ -386,7 +386,117 @@ function cardinal(iu::IntervalUnion)
 	sum([cardinal(i) for i in iu.components])
 end
 
+"""
+	number_of_components(iu)
 
+Returns the number of components in the given `IntervalUnion`.
+"""
+function number_of_components(iu::IntervalUnion)
+	length(iu.components)
+end
+
+"""
+	iu1 ∪ iu2
+
+Returns the `IntervalUnion` corresponding to the union between 
+`IntervalUnion` iu1 and `IntervalUnion` iu2.
+"""
+function ∪(iu1::IntervalUnion, iu2::IntervalUnion)
+	IntervalUnion(vcat(iu1.components,iu2.components))
+end
+
+"""
+	iu1 ∩ iu2
+
+Returns the `IntervalUnion` corresponding to the intersection between 
+`IntervalUnion` iu1 and `IntervalUnion` iu2.
+"""
+function ∩(iu1::IntervalUnion, iu2::IntervalUnion)
+	components = Interval[]
+	for c1 in iu1.components
+		for c2 in iu2.components
+			if !disjoint(c1,c2)
+				push!(components,c1 ∩ c2)
+			end
+		end
+	end
+	IntervalUnion(components)
+end
+
+"""
+	complement(iu)
+
+Returns the complement of the given `IntervalUnion`.
+
+Examples:
+	- complement([0,1]) = ]-Inf,0[ ∪ ]1,Inf[
+	- complement([0,0]) = ]-Inf,0[ ∪ ]0,Inf[
+	- complement(]0,0[) = ]-Inf,Inf[
+	- complement([0,1[ ∪ ]2,3]) = ]-Inf,0[ ∪ [1,2] ∪ ]3,Inf[
+"""
+function complement(iu::IntervalUnion)
+	components = Interval[]
+	if number_of_components(iu) == 0
+		return IntervalUnion([Interval(-Inf,true,Inf,true)])
+	elseif number_of_components(iu) == 1
+		if left(iu.components[1]) == -Inf && right(iu.components[1]) == Inf
+			return IntervalUnion([])
+		elseif left(iu.components[1]) == -Inf && right(iu.components[1]) != Inf
+			if iu.components[1].open_right
+				return IntervalUnion([Interval(right(iu.components[1]),Inf,true)])
+			else
+				return IntervalUnion([Interval(right(iu.components[1]),true,Inf,true)])
+			end
+		elseif left(iu.components[1]) != -Inf && right(iu.components[1]) == Inf
+			if iu.components[1].open_left
+				return IntervalUnion([Interval(-Inf,true,right(iu.components[1]))])
+			else
+				return IntervalUnion([Interval(-Inf,true,right(iu.components[1]),true)])
+			end
+		else
+			if iu.components[1].open_left
+				if iu.components[1].open_right
+					return IntervalUnion([Interval(-Inf,true,left(iu.components[1])),Interval(right(iu.components[1]),Inf,true)])
+				else
+					return IntervalUnion([Interval(-Inf,true,left(iu.components[1])),Interval(right(iu.components[1]),true,Inf,true)])
+				end
+			else
+				if iu.components[1].open_right
+					return IntervalUnion([Interval(-Inf,true,left(iu.components[1]),true),Interval(right(iu.components[1]),Inf,true)])
+				else
+					return IntervalUnion([Interval(-Inf,true,left(iu.components[1]),true),Interval(right(iu.components[1]),true,Inf,true)])
+				end
+			end
+		end
+	else
+		if left(iu.components[1]) != -Inf
+			if iu.components[1].open_left
+				push!(components,Interval(-Inf,true,left(iu.components[1])))
+			else
+				push!(components,Interval(-Inf,true,left(iu.components[1]),true))
+			end
+		end
+		for (c1,c2) in zip(iu.components[1:(end-1)],iu.components[2:end])
+			if c1.open_right && c2.open_left
+				push!(components,Interval(right(c1),left(c2)))
+			elseif !c1.open_right && c2.open_left
+				push!(components,Interval(right(c1),true,left(c2)))
+			elseif c1.open_right && !c2.open_left
+				push!(components,Interval(right(c1),left(c2),true))
+			else
+				push!(components,Interval(right(c1),true,left(c2),true))
+			end
+		end
+		if right(iu.components[end]) != Inf
+			if iu.components[end].open_right
+				push!(components,Interval(right(iu.components[end]),Inf,true))
+			else
+				push!(components,Interval(right(iu.components[end]),true,Inf,true))
+			end
+		end
+	end
+	IntervalUnion(components)
+end
 
 
 
