@@ -1,0 +1,23 @@
+language: julia
+sudo: false
+os:
+    - linux
+
+julia:
+    - 1.0
+    - nightly
+                        
+allow_failures:
+    - julia: nightly
+
+notifications:
+    email: false
+
+script:
+    - julia -e 'using Pkg; Pkg.clone(pwd()); Pkg.build("IntervalUnions"); Pkg.test("IntervalUnions"; coverage=true)'
+                                    
+after_success:
+    - julia -e 'using Pkg; cd(Pkg.dir("IntervalUnions")); Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
+    - julia -e 'using Pkg; cd(Pkg.dir("IntervalUnions")); Pkg.add("Documenter"); ENV["DOCUMENTER_DEBUG"] = "true"; include(joinpath("docs", "make.jl"))'
+
+
