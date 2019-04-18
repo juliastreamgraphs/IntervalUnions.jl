@@ -339,6 +339,16 @@ function setdiff(i1::Interval, i2::Interval)
 end
 
 """
+	symdiff(i1,i2)
+
+Symdiff is not implemented for `Interval`s.
+Please use `IntervalUnion`s instead.
+"""
+function symdiff(i1::Interval, i2::Interval)
+	throw("Not implemented.")
+end
+
+"""
 	sample(i)
 
 Returns a number drawn uniformly at random in the given `Interval`.
@@ -616,6 +626,15 @@ Returns the `IntervalUnion` with elements in iu1 but not in iu2.
 """
 function setdiff(iu1::IntervalUnion, iu2::IntervalUnion)
 	complement(iu2) ∩ iu1
+end
+
+"""
+	symdiff(iu1,iu2)
+
+Returns the `IntervalUnion` with elements in iu1 or iu2 but not in both.
+"""
+function symdiff(iu1::IntervalUnion, iu2::IntervalUnion)
+	setdiff(iu1 ∪ iu2, iu1 ∩ iu2)
 end
 
 """
