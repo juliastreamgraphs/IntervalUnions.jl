@@ -271,7 +271,7 @@ function disjoint(i1::Interval, i2::Interval)
 		if right(i1) < left(i2)
 			return true
 		elseif right(i1) == left(i2)
-			(i1.open_right && i2.open_left) ? (return true) : (return false)
+			(i1.open_right || i2.open_left) ? (return true) : (return false)
 		else
 			return false
 		end
@@ -328,7 +328,13 @@ Please use the `IntervalUnion` type to work with unions of disjoint intervals.
 """
 function ∪(i1::Interval,i2::Interval)
     if disjoint(i1,i2)
-        throw("Interval $(string(i1)) and $(string(i2)) are disjoints.")
+    	if right(i1)==left(i2) && (!i1.open_right || !i2.open_left)
+    		return Interval(left(i1),i1.open_left,right(i2),i2.open_right)
+    	elseif right(i2)==left(i1) && (!i2.open_right || !i1.open_left)
+    		return Interval(left(i2),i2.open_left,right(i1),i1.open_right)
+    	else
+	        throw("Interval $(string(i1)) and $(string(i2)) are disjoints.")
+	    end
     end
     l::Real = left(i2)
     open_left::Bool = i2.open_left
@@ -433,7 +439,7 @@ mutable struct IntervalUnion
 			if length(cleaned_intervals) == 0
 				push!(cleaned_intervals,interval)
 			else
-				if !disjoint(cleaned_intervals[end],interval)
+				if !disjoint(cleaned_intervals[end],interval) || ((right(cleaned_intervals[end]) == left(interval)) && (!cleaned_intervals[end].open_right || !interval.open_left))
 					cleaned_intervals[end] = cleaned_intervals[end] ∪ interval
 				else
 					push!(cleaned_intervals,interval)

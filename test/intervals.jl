@@ -76,16 +76,16 @@ N = Interval(-1.3,true,2.6,true)
 @test disjoint(Interval(1.1,2.0),Interval(0.0,1.0))
 # [0,1] and [1,2] are not disjoint
 @test !disjoint(Interval(0.0,1.0),Interval(1.0,2.0))
-# [0,1[ and [1,2] are not disjoint
-@test !disjoint(Interval(0.0,1.0,true),Interval(1.0,2.0))
-# [0,1] and ]1,2] are not disjoint
-@test !disjoint( Interval(0.0,1.0), Interval(1.0,true,2.0))
+# [0,1[ and [1,2] are disjoint
+@test disjoint(Interval(0.0,1.0,true),Interval(1.0,2.0))
+# [0,1] and ]1,2] are disjoint
+@test disjoint( Interval(0.0,1.0), Interval(1.0,true,2.0))
 # ]1,2[ and [0,1[ are disjoint
 @test disjoint(Interval(1.0,true,2.0,true), Interval(0.0,1.0,true))
 # ]0,2[ and ]0,1[ are not disjoint
 @test !disjoint(Interval(0.0,true,2.0,true), Interval(0.0,true,1.0,true))
-# ]-1,1.5[ and [1.5,1.67[ are not disjoint
-@test !disjoint(Interval(-1.0,true,1.5,true),Interval(1.5,false,1.67,true))
+# ]-1,1.5[ and [1.5,1.67[ are disjoint
+@test disjoint(Interval(-1.0,true,1.5,true),Interval(1.5,false,1.67,true))
 
 # Tests for ∩
 # [0,1] ∩ [0.5,1.5] = [0.5,1]
@@ -100,8 +100,8 @@ N = Interval(-1.3,true,2.6,true)
 @test Interval(1.2,1.6) ∩ Interval(0.0,3.5) == Interval(1.2,1.6)
 # [0,1.5[ ∩ ]1.5,1.6] = ]0,0[
 @test Interval(0.0,1.5,true) ∩ Interval(1.5,true,1.6) == Interval(0.0,true,0.0,true)
-# [0,1] ∩ ]1,2] = [1,1]
-@test Interval(0,1) ∩ Interval(1,true,2) == Interval(1,1)
+# [0,1] ∩ ]1,2] = ]0,0[	
+@test Interval(0,1) ∩ Interval(1,true,2) == Interval(0,true,0,true)
 
 # Tests for ∪
 # [0,1] ∪ [0.5,1.5] = [0,1.5]

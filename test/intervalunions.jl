@@ -42,3 +42,26 @@ K = IntervalUnion([Interval(0,true,1,true),Interval(1,true,2.6),Interval(2.7,4)]
 # Tests for ∪
 # [0,1] ∪ ]1,2.5] = [0,2.5]
 @test I ∪ J == IntervalUnion([Interval(0,2.5)])
+
+# Tests for complement
+# comp([0,1]) = ]-inf,0[ ∪ ]1,inf[
+@test complement(I) == IntervalUnion([Interval(-Inf,true,0,true),Interval(1,true,Inf,true)])
+# comp([1,2.5]) = ]-inf,1] ∪ ]2.5,inf[
+@test complement(J) == IntervalUnion([Interval(-Inf,true,1),Interval(2.5,true,Inf,true)])
+# comp(]0,1[ ∪ ]1,2.6] ∪ [2.7,4]) = ]-inf,0] ∪ [1,1] ∪ ]2.6,2.7[ ∪ ]4,inf[
+@test complement(K) == IntervalUnion([Interval(-Inf,true,0),Interval(1,1),Interval(2.6,true,2.7,true),Interval(4,true,Inf,true)])
+# comp([1,1]) = ]-inf,1[ ∪ ]1,inf[
+@test complement(IntervalUnion([Interval(1,1)])) == IntervalUnion([Interval(-Inf,true,1,true),Interval(1,true,Inf,true)])
+@test complement(complement(I)) == I
+@test complement(complement(J)) == J
+@test complement(complement(K)) == K
+
+# Tests for setdiff
+# setdiff([0,2] ∪ [3,4], [1,3] ∪ [3.5,5]) = [0,1[ ∪ ]3,3.5[
+@test setdiff(IntervalUnion([Interval(0,2),Interval(3,4)]),IntervalUnion([Interval(1,3),Interval(3.5,5)]))==IntervalUnion([Interval(0,1,true),Interval(3,true,3.5,true)])
+# setdiff([0,1], ]0,1[ ∪ ]1,2.6] ∪ [2.7,4]) = [0,0] ∪ [1,1]
+@test setdiff(I,K) == IntervalUnion([Interval(0,0),Interval(1,1)])
+
+# Tests for symdiff
+# symdiff([0,1], ]0,1[ ∪ ]1,2.6] ∪ [2.7,4]) =[0,0] ∪ [1,2.6] ∪ [2.7,4]
+@test symdiff(I,K) == IntervalUnion([Interval(0,0),Interval(1,2.6),Interval(2.7,4)])
