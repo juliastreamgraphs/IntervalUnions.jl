@@ -236,7 +236,9 @@ end
 Returns true if interval i1 and interval i2 are disjoint, false otherwise.
 """
 function disjoint(i1::Interval, i2::Interval)
-	i1 == i2 && false
+	if i1 == i2
+		return false
+	end
 	if i1 < i2
 		if right(i1) < left(i2)
 			return true
@@ -343,6 +345,18 @@ Returns an array of n random numbers drawn uniformly in the given `Interval`.
 """
 function sample(i::Interval, n::Int64)
 	[sample(i) for x in 1:n]
+end
+
+"""
+	jaccard(i1,i2)
+
+Returns the jaccard similarity between two `Interval`s.
+If |i1 ∪ i2|=0, this function returns 0.
+"""
+function jaccard(i1::Interval, i2::Interval)
+	u = i1 ∪ i2
+	cardu = cardinal(u)
+	cardu != 0 ? cardinal(i1 ∩ i2) / cardu : 0.0
 end
 
 """
@@ -554,4 +568,16 @@ Returns an array of n random numbers drawn uniformly in the given `IntervalUnion
 """
 function sample(iu::IntervalUnion, n::Int64)
 	[sample(iu) for x in 1:n]
+end
+
+"""
+	jaccard(iu1,iu2)
+
+Returns the jaccard similarity between two `IntervalUnion`s.
+If |iu1 ∪ iu2|=0, this function returns 0.
+"""
+function jaccard(iu1::IntervalUnion, iu2::IntervalUnion)
+	u = iu1 ∪ iu2
+	cardu = cardinal(u)
+	cardu != 0 ? cardinal(iu1 ∩ iu2) / cardu : 0.0
 end
