@@ -383,6 +383,9 @@ Returns the jaccard similarity between two `Interval`s.
 If |i1 ∪ i2|=0, this function returns 0.
 """
 function jaccard(i1::Interval, i2::Interval)
+	if i1 == i2
+		return 1.0
+	end
 	u = i1 ∪ i2
 	cardu = cardinal(u)
 	cardu != 0 ? cardinal(i1 ∩ i2) / cardu : 0.0

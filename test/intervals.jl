@@ -53,6 +53,9 @@ N = Interval(-1.3,true,2.6,true)
 @test cardinal(L) == 1.0
 @test cardinal(M) == 6.0
 @test isapprox(cardinal(N),3.9)
+@test cardinal(Interval(0,Inf,true)) == Inf
+@test cardinal(Interval(-Inf,true,2)) == Inf
+@test cardinal(Interval(-Inf,true,Inf,true)) == Inf
 
 # Tests for ⊆
 @test J ⊆ I
@@ -112,3 +115,24 @@ N = Interval(-1.3,true,2.6,true)
 @test Interval(0.5,1.0) ∪ Interval(0.0,3.5) == Interval(0.0,3.5)
 # [0,1] ∪ ]1,2] = [0,2]
 @test Interval(0,1) ∪ Interval(1,true,2) == Interval(0,2)
+
+# Tests for sampling intervals
+@test 0 <= sample(Interval(0,1)) <= 1
+@test 0 < sample(Interval(0,true,1,true)) < 1
+samples = sample(Interval(2,true,6),100)
+@test length(samples) == 100
+for s in samples
+	@test 2 < s <= 6
+end
+
+# Tests for jaccard similarity
+@test jaccard(Interval(0,1),Interval(0,1)) == 1.0
+@test jaccard(Interval(0,true,1,true),Interval(0,1)) == 1.0
+@test jaccard(Interval(0,2),Interval(0,1)) == 0.5
+@test isapprox(jaccard(Interval(-1,2),Interval(0,1)),0.333333333333)
+@test jaccard(Interval(0,1),Interval(1,2)) == 0.0
+@test jaccard(Interval(0,1),Interval(1,true,2)) == 0.0
+@test jaccard(Interval(0,1),Interval(1,1)) == 0.0
+@test jaccard(Interval(0,1),Interval(1,true,1,true)) == 0.0
+@test jaccard(Interval(-Inf,true,0),Interval(0,Inf,true)) == 0.0
+@test jaccard(Interval(-Inf,true,Inf,true),Interval(-Inf,true,Inf,true)) == 1.0
