@@ -318,6 +318,34 @@ function ∪(i1::Interval,i2::Interval)
 end
 
 """
+	sample(i)
+
+Returns a number drawn uniformly at random in the given `Interval`.
+"""
+function sample(i::Interval)
+	if cardinal(i) == 0 && (i.open_left && i.open_right)
+		throw("Cannot sample from empty Interval.")
+	end
+	s = rand() * (right(i)-left(i)) + left(i)
+	if i.open_left && s == left(i)
+		return sample(i)
+	elseif i.open_right && s == right(i)
+		return sample(i)
+	else
+		return s
+	end
+end
+
+"""
+	sample(i,n)
+
+Returns an array of n random numbers drawn uniformly in the given `Interval`.
+"""
+function sample(i::Interval, n::Int64)
+	[sample(i) for x in 1:n]
+end
+
+"""
 	IntervalUnion
 
 `IntervalUnion` representation.
@@ -498,8 +526,32 @@ function complement(iu::IntervalUnion)
 	IntervalUnion(components)
 end
 
+"""
+	sample(iu)
 
+Returns a number drawn uniformly at random in the given `IntervalUnion`.
+"""
+function sample(iu::IntervalUnion)
+	if number_of_components(iu) == 0
+		throw("Cannot sample from empty union of Intervals.")
+	end
+	size_components = [cardinal(i) for i in iu.components]
+	full_size = sum(size_components)
+	if full_size == 0
+		return left(iu.components[rand(1:number_of_components(iu))])
+	end
+	size_components_normalized = size_components ./ full_size
+	probabilities = cumsum(size_components_normalized)
+	r = rand()
+	idx_component = findfirst(x->x>r,probabilities)
+	sample(iu.components[idx_component])
+end
 
+"""
+	sample(iu,n)
 
-
-
+Returns an array of n random numbers drawn uniformly in the given `IntervalUnion`.
+"""
+function sample(iu::IntervalUnion, n::Int64)
+	[sample(iu) for x in 1:n]
+end

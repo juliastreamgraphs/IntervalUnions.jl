@@ -12,7 +12,7 @@ export
 	OrderedPair, Interval, IntervalUnion,
 
 	==, ∈, ⊆, ∩, ∪, isless, show, cardinal, left, right, disjoint, string, number_of_components, 
-	complement
+	complement, sample
 
 # Includes
 
