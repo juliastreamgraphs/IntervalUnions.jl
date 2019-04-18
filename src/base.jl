@@ -212,9 +212,37 @@ Returns true if the interval i1 is included in the interval i2.
 """
 function ⊆(i1::Interval, i2::Interval)
     if i2.open_left
-        i2.open_right ? (left(i2) < left(i1)) && (right(i1) < right(i2)) : (left(i2) < left(i1)) && (right(i1) <= right(i2))
+        if i2.open_right
+        	if i1.open_left
+        		c1 = left(i2) <= left(i1)
+        	else
+        		c1 = left(i2) < left(i1)
+        	end
+        	if i1.open_right
+        		c2 = right(i1) <= right(i2)
+        	else
+        		c2 = right(i1) < right(i2)
+        	end
+        	return c1 && c2
+        else
+        	if i1.open_left
+        		c1 = left(i2) <= left(i1)
+        	else
+        		c1 = left(i2) < left(i1)
+        	end
+        	return c1 && (right(i1) <= right(i2))
+        end
     else
-        i2.open_right ? (left(i2) <= left(i1)) && (right(i1) < right(i2)) : (left(i2) <= left(i1)) && (right(i1) <= right(i2))
+        if i2.open_right
+        	if i1.open_right
+        		c2 = right(i1) <= right(i2)
+        	else
+        		c2 = right(i1) < right(i2)
+        	end
+        	return (left(i2) <= left(i1)) && c2
+        else
+        	return (left(i2) <= left(i1)) && (right(i1) <= right(i2))
+        end
     end
 end
 
@@ -432,6 +460,23 @@ Prints the string representation of an `IntervalUnion`.
 """
 function show(io::IO, iu::IntervalUnion)
 	println(string(iu))
+end
+
+"""
+	iu1 == iu2
+
+Equality defined for `IntervalUnion`s.
+"""
+function ==(iu1::IntervalUnion, iu2::IntervalUnion)
+	if number_of_components(iu1) != number_of_components(iu2)
+		return false
+	end
+	for (i,j) in zip(iu1.components,iu2.components)
+		if i != j
+			return false
+		end
+	end
+	true
 end
 
 """

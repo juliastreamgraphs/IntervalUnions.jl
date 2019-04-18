@@ -63,6 +63,7 @@ N = Interval(-1.3,true,2.6,true)
 @test I ⊈ J
 @test I ⊆ N
 @test M ⊈ N
+@test Interval(1,true,2.5) ⊆ Interval(1,true,2.6)
 
 # Tests for disjoint
 # [0,1] and [0.5,0.9] are not disjoint

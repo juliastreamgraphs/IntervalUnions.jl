@@ -15,3 +15,8 @@ end
     @info "Check operations on simple intervals"
     include("intervals.jl")
 end
+
+@testset "IntervalUnionss Tests" begin
+    @info "Check operations on unions of intervals"
+    include("intervalunions.jl")
+end
