@@ -329,6 +329,16 @@ function ∪(i1::Interval,i2::Interval)
 end
 
 """
+	setdiff(i1,i2)
+
+Setdiff is not implemented for `Interval`s.
+Please use `IntervalUnion`s instead.
+"""
+function setdiff(i1::Interval, i2::Interval)
+	throw("Not implemented.")
+end
+
+"""
 	sample(i)
 
 Returns a number drawn uniformly at random in the given `Interval`.
@@ -412,6 +422,42 @@ function show(io::IO, iu::IntervalUnion)
 end
 
 """
+	left(iu)
+
+Returns a vector of left limits of the given `IntervalUnion`.
+"""
+function left(iu::IntervalUnion)
+	[left(i) for i in iu.components]
+end
+
+"""
+	right(iu)
+
+Returns a vector of right limits of the given `IntervalUnion`.
+"""
+function right(iu::IntervalUnion)
+	[right(i) for i in iu.components]
+end
+
+"""
+	limits(iu)
+
+Returns a sorted array of limits of the given `IntervalUnion`.
+"""
+function limits(iu::IntervalUnion)
+	limit_set = Set{Real}()
+	for i in iu.components
+		push!(limit_set,left(i))
+		push!(limit_set,right(i))
+	end
+	limit_array = Real[]
+	for l in limit_set
+		push!(limit_array,l)
+	end
+	sort(limit_array)
+end
+
+"""
 	x ∈ iu
 
 Returns true if x ∈ iu and false if x ∉ iu.
@@ -444,6 +490,20 @@ Returns the number of components in the given `IntervalUnion`.
 """
 function number_of_components(iu::IntervalUnion)
 	length(iu.components)
+end
+
+"""
+	iu1 ⊆ iu2
+
+Returns true if the `IntervalUnion` iu1 is included in the `IntervalUnion` iu2.
+"""
+function ⊆(iu1::IntervalUnion, iu2::IntervalUnion)
+    for i in iu1.components
+    	if !any([i ⊆ j for j in iu2.components])
+    		return false
+    	end
+    end
+    true
 end
 
 """
@@ -547,6 +607,15 @@ function complement(iu::IntervalUnion)
 		end
 	end
 	IntervalUnion(components)
+end
+
+"""
+	setdiff(iu1,iu2)
+
+Returns the `IntervalUnion` with elements in iu1 but not in iu2.
+"""
+function setdiff(iu1::IntervalUnion, iu2::IntervalUnion)
+	complement(iu2) ∩ iu1
 end
 
 """
