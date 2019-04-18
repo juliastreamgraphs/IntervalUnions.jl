@@ -243,7 +243,7 @@ function disjoint(i1::Interval, i2::Interval)
 		if right(i1) < left(i2)
 			return true
 		elseif right(i1) == left(i2)
-			(i1.open_right || i2.open_left) ? (return true) : (return false)
+			(i1.open_right && i2.open_left) ? (return true) : (return false)
 		else
 			return false
 		end
@@ -283,7 +283,11 @@ function ∩(i1::Interval, i2::Interval)
         open_right = i1.open_right | i2.open_right 
     end
 
-    Interval(OrderedPair(l,r),open_left,open_right)
+    if l==r
+    	return Interval(OrderedPair(l,r),false,false)
+    else
+	    return Interval(OrderedPair(l,r),open_left,open_right)
+	end
 end
 
 
@@ -296,7 +300,7 @@ Please use the `IntervalUnion` type to work with unions of disjoint intervals.
 """
 function ∪(i1::Interval,i2::Interval)
     if disjoint(i1,i2)
-        throw("Interval $(i1) and $(i2) are disjoints.")
+        throw("Interval $(string(i1)) and $(string(i2)) are disjoints.")
     end
     l::Real = left(i2)
     open_left::Bool = i2.open_left
@@ -316,7 +320,12 @@ function ∪(i1::Interval,i2::Interval)
     elseif right(i1) == right(i2)
         open_right = i1.open_right & i2.open_right
     end
-    Interval(OrderedPair(l,r),open_left,open_right)
+
+    if l==r
+    	return Interval(OrderedPair(l,r),false,false)
+    else
+	    return Interval(OrderedPair(l,r),open_left,open_right)
+	end
 end
 
 """
