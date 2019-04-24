@@ -1,2 +1,40 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Intervals · IntervalUnions.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link href="../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>IntervalUnions.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../">Getting Started</a></li><li class="current"><a class="toctext" href>Intervals</a><ul class="internal"></ul></li><li><a class="toctext" href="../intervalunions/">IntervalUnions</a></li></ul></nav><article id="docs"><header><nav><ul><li><a href>Intervals</a></li></ul><a class="edit-page" href="https://github.com/juliastreamgraphs/IntervalUnions.jl/blob/master/docs/src/intervals.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Intervals</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Intervals-1" href="#Intervals-1">Intervals</a></h1><p>TODO</p><footer><hr/><a class="previous" href="../"><span class="direction">Previous</span><span class="title">Getting Started</span></a><a class="next" href="../intervalunions/"><span class="direction">Next</span><span class="title">IntervalUnions</span></a></footer></article></body></html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Intervals · IntervalUnions.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link href="../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>IntervalUnions.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../">Getting Started</a></li><li class="current"><a class="toctext" href>Intervals</a><ul class="internal"><li><a class="toctext" href="#Example-Usage-1">Example Usage</a></li></ul></li><li><a class="toctext" href="../intervalunions/">IntervalUnions</a></li></ul></nav><article id="docs"><header><nav><ul><li><a href>Intervals</a></li></ul><a class="edit-page" href="https://github.com/juliastreamgraphs/IntervalUnions.jl/blob/master/docs/src/intervals.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Intervals</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Intervals-1" href="#Intervals-1">Intervals</a></h1><p>The type <code>Interval</code> implements a basic interval of real numbers like <code>[0,1]</code> or <code>]2.1,3.14]</code>. The following section gives some basic examples of operations on <code>Interval</code>s. Note that unions of disjoint <code>Interval</code>s cannot be computed and will throw an error. To work with disjoint intervals, use <code>IntervalUnions</code> instead. </p><h2><a class="nav-anchor" id="Example-Usage-1" href="#Example-Usage-1">Example Usage</a></h2><h3><a class="nav-anchor" id="Interval-Definition-1" href="#Interval-Definition-1">Interval Definition</a></h3><pre><code class="language-julia">julia&gt; i = Interval(0,1)
+[0,1]
+julia&gt; j = Interval(0.2,true,2)
+]0.2,2]
+julia&gt; k = Interval(2,3,true)
+[2,3[
+julia&gt; l = Interval(1.6,true,2.3,true)
+]1.6,2.3[</code></pre><h3><a class="nav-anchor" id="Inclusivity-1" href="#Inclusivity-1">Inclusivity</a></h3><pre><code class="language-julia">julia&gt; i = Interval(0,1)
+[0,1]
+julia&gt; 0 in i
+true
+julia&gt; 1.000001 in i
+false
+julia&gt; j = Interval(0,1,true)
+[0,1[
+julia&gt; 1 in j
+false
+julia&gt; 0.99999999 in j
+true
+julia&gt; j ⊆ i
+true
+julia&gt; i ⊆ j
+false</code></pre><h3><a class="nav-anchor" id="Intersection-1" href="#Intersection-1">Intersection</a></h3><pre><code class="language-julia">julia&gt; i = Interval(0,1)
+[0,1]
+julia&gt; j = Interval(0.4,true,1,true)
+]0.4,1[
+julia&gt; i ∩ j
+]0.4,1[
+julia&gt; k = Interval(0.2,true,0.8)
+]0.2,0.8]
+julia&gt; i ∩ k
+]0.2,0.8]
+julia&gt; intersect(k,j)
+]0.4,0.8[</code></pre><h3><a class="nav-anchor" id="Union-1" href="#Union-1">Union</a></h3><pre><code class="language-julia">julia&gt; i = Interval(0,1)
+[0,1]
+julia&gt; j = Interval(0.4,true,2.1,true)
+]0.4,2.1[
+julia&gt; i ∪ j
+[0,2.1[</code></pre><p>UNIFINISHED....</p><footer><hr/><a class="previous" href="../"><span class="direction">Previous</span><span class="title">Getting Started</span></a><a class="next" href="../intervalunions/"><span class="direction">Next</span><span class="title">IntervalUnions</span></a></footer></article></body></html>
