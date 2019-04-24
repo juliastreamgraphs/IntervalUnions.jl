@@ -456,7 +456,13 @@ end
 Returns a string representation of an `IntervalUnion`.
 """
 function string(iu::IntervalUnion)
-	reduce((x,y)->"$(string(x)) ∪ $(string(y))", iu.components)
+	if number_of_components(iu) == 0
+		return "∅"
+	elseif number_of_components(iu) == 1
+		return string(iu.components[1])
+	else
+		return reduce((x,y)->"$(string(x)) ∪ $(string(y))", iu.components)
+	end
 end
 
 """

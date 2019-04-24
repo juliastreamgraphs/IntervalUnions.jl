@@ -42,6 +42,24 @@ K = IntervalUnion([Interval(0,true,1,true),Interval(1,true,2.6),Interval(2.7,4)]
 # Tests for ∪
 # [0,1] ∪ ]1,2.5] = [0,2.5]
 @test I ∪ J == IntervalUnion([Interval(0,2.5)])
+# [0,1] ∪ ]0,1[ ∪ ]1,2.6] ∪ [2.7,4] = [0,2.6] ∪ [2.7,4]
+@test I ∪ K == IntervalUnion([Interval(0,2.6),Interval(2.7,4)])
+# ]1,2.5] ∪ ]0,1[ ∪ ]1,2.6] ∪ [2.7,4] = ]0,1[ ∪ ]1,2.6] ∪ [2.7,4]
+@test J ∪ K == K
+@test I ∪ I == I
+@test J ∪ J == J
+@test K ∪ K == K
+
+# Tests for ∩
+# [0,1] ∩ ]1,2.5] = ]0,0[
+@test I ∩ J == IntervalUnion([])
+# [0,1] ∩ (]0,1[ ∪ ]1,2.6] ∪ [2.7,4]) = ]0,1[
+@test I ∩ K == IntervalUnion([Interval(0,true,1,true)])
+# ]1,2.5] ∩ (]0,1[ ∪ ]1,2.6] ∪ [2.7,4]) = ]1,2.5]
+@test J ∩ K == J
+@test I ∩ I == I
+@test J ∩ J == J
+@test K ∩ K == K
 
 # Tests for complement
 # comp([0,1]) = ]-inf,0[ ∪ ]1,inf[
