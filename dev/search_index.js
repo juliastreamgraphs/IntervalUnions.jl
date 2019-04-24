@@ -1,0 +1,3 @@
+var documenterSearchIndex = {"docs":
+[{"location":"#IntervalUnions-1","page":"Getting Started","title":"IntervalUnions","text":"","category":"section"},{"location":"#","page":"Getting Started","title":"Getting Started","text":"TODO","category":"page"},{"location":"intervals/#Intervals-1","page":"Intervals","title":"Intervals","text":"","category":"section"},{"location":"intervals/#","page":"Intervals","title":"Intervals","text":"TODO","category":"page"},{"location":"intervalunions/#IntervalUnions-1","page":"IntervalUnions","title":"IntervalUnions","text":"","category":"section"},{"location":"intervalunions/#","page":"IntervalUnions","title":"IntervalUnions","text":"TODO","category":"page"}]
+}
