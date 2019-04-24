@@ -21,7 +21,8 @@ export
 	number_of_components, cardinal,
 
 	# Operations
-	∩, ∪, complement, jaccard, setdiff, symdiff, sample
+	∩, ∪, complement, jaccard, overlap_coefficient, dice_coefficient,
+	setdiff, symdiff, sample
 
 # Includes
 

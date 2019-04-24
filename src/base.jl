@@ -448,6 +448,35 @@ function jaccard(i1::Interval, i2::Interval)
 end
 
 """
+	overlap_coefficient(i1,i2)
+
+Returns the overlap coefficient between two `Interval`s defined as:
+```math
+\\frac{\\left| A \\cap B \\right|}{min \\left( \\left|A \\right|, \\left|B \\right| \\right)}
+```
+This means that if setA is a subset of B or the converse then the overlap coefficient is equal to 1.
+Note: If `|A|=0` and `|B|=0`, this function returns 0.
+"""
+function overlap_coefficient(i1::Interval, i2::Interval)
+	denom = min(cardinal(i1),cardinal(i2))
+	denom != 0 ? cardinal(i1 ∩ i2) / denom : 0
+end
+
+"""
+	dice_coefficient(i1,i2)
+
+Returns the Sørensen–Dice coefficient between two `Interval`s defined as:
+```math
+\\frac{2 \\left| A \\cap B \\right|}{\\left|A \\right| + \\left|B \\right|}
+```
+Note: If `|A|+|B|=0`, this function returns 0.
+"""
+function dice_coefficient(i1::Interval, i2::Interval)
+	denom = cardinal(i1) + cardinal(i2)
+	denom != 0 ? 2 * cardinal(i1 ∩ i2) / denom : 0
+end
+
+"""
 	IntervalUnion
 
 `IntervalUnion` representation.
@@ -779,4 +808,33 @@ function jaccard(iu1::IntervalUnion, iu2::IntervalUnion)
 	u = iu1 ∪ iu2
 	cardu = cardinal(u)
 	cardu != 0 ? cardinal(iu1 ∩ iu2) / cardu : 0.0
+end
+
+"""
+	overlap_coefficient(iu1,iu2)
+
+Returns the overlap coefficient between two `IntervalUnion`s defined as:
+```math
+\\frac{\\left| A \\cap B \\right|}{min \\left( \\left|A \\right|, \\left|B \\right| \\right)}
+```
+This means that if set A is a subset of B or the converse then the overlap coefficient is equal to 1.
+Note: If `|A|=0` and `|B|=0`, this function returns 0.
+"""
+function overlap_coefficient(iu1::IntervalUnion, iu2::IntervalUnion)
+	denom = min(cardinal(iu1),cardinal(iu2))
+	denom != 0 ? cardinal(iu1 ∩ iu2) / denom : 0
+end
+
+"""
+	dice_coefficient(iu1,iu2)
+
+Returns the Sørensen–Dice coefficient between two `IntervalUnion`s defined as:
+```math
+\\frac{2 \\left| A \\cap B \\right|}{\\left|A \\right| + \\left|B \\right|}
+```
+Note: If `|A|+|B|=0`, this function returns 0.
+"""
+function dice_coefficient(iu1::IntervalUnion, iu2::IntervalUnion)
+	denom = cardinal(iu1) + cardinal(iu2)
+	denom != 0 ? 2 * cardinal(iu1 ∩ iu2) / denom : 0
 end
