@@ -52,7 +52,7 @@ K = IntervalUnion([Interval(0,true,1,true),Interval(1,true,2.6),Interval(2.7,4)]
 
 # Tests for ∩
 # [0,1] ∩ ]1,2.5] = ]0,0[
-@test I ∩ J == IntervalUnion([])
+@test I ∩ J == IntervalUnion()
 # [0,1] ∩ (]0,1[ ∪ ]1,2.6] ∪ [2.7,4]) = ]0,1[
 @test I ∩ K == IntervalUnion([Interval(0,true,1,true)])
 # ]1,2.5] ∩ (]0,1[ ∪ ]1,2.6] ∪ [2.7,4]) = ]1,2.5]

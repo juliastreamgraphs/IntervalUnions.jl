@@ -153,6 +153,15 @@ function Interval(left::Real, right::Real, open_right::Bool)
 end
 
 """
+	Interval()
+
+Empty `Interval`.
+"""
+function Interval()
+	Interval(0,true,0,true)
+end
+
+"""
 	left(i)
 
 Returns the left limit of the given `Interval`.
@@ -171,11 +180,23 @@ function right(i::Interval)
 end
 
 """
+	empty(i)
+
+Returns true if the given `Interval` is empty.
+"""
+function empty(i::Interval)
+	(left(i) == right(i)) && i.open_left && i.open_right
+end
+
+"""
 	string(i)
 
 Returns a string representation of an `Interval`.
 """
 function string(i::Interval)
+	if empty(i)
+		return "∅"
+	end
 	if i.open_left
         i.open_right ? "]$(left(i)),$(right(i))[" : "]$(left(i)),$(right(i))]"
     else
@@ -253,6 +274,8 @@ Returns the cardinal of the given `Interval`.
 ```math
 \\left| [a,b] \\right| = b - a
 ```
+
+Warning: An `Interval` can be non empty and have a cardinal of zero (ex: [1,1]).
 """
 function cardinal(i::Interval)
 	right(i) - left(i)
@@ -288,8 +311,7 @@ If i1 and i2 are disjoint, this function returns an empty `Interval`.
 """
 function ∩(i1::Interval, i2::Interval)
     if disjoint(i1,i2)
-    	p = OrderedPair(left(i1),left(i1))
-        return Interval(p,true,true)
+        return Interval()
     end
 
     l::Real = left(i2)
@@ -432,17 +454,19 @@ end
 """
 mutable struct IntervalUnion
 	components::Array{Interval,1}
-	function IntervalUnion(intervals)
+	function IntervalUnion(intervals::Array{Interval,1})
 		sorted_intervals = sort(intervals)
 		cleaned_intervals = Interval[]
 		for interval in sorted_intervals
-			if length(cleaned_intervals) == 0
-				push!(cleaned_intervals,interval)
-			else
-				if !disjoint(cleaned_intervals[end],interval) || ((right(cleaned_intervals[end]) == left(interval)) && (!cleaned_intervals[end].open_right || !interval.open_left))
-					cleaned_intervals[end] = cleaned_intervals[end] ∪ interval
-				else
+			if !empty(interval)
+				if length(cleaned_intervals) == 0
 					push!(cleaned_intervals,interval)
+				else
+					if !disjoint(cleaned_intervals[end],interval) || ((right(cleaned_intervals[end]) == left(interval)) && (!cleaned_intervals[end].open_right || !interval.open_left))
+						cleaned_intervals[end] = cleaned_intervals[end] ∪ interval
+					else
+						push!(cleaned_intervals,interval)
+					end
 				end
 			end
 		end
@@ -451,12 +475,30 @@ mutable struct IntervalUnion
 end
 
 """
+	IntervalUnion()
+
+Empty union of `Interval`s.
+"""
+function IntervalUnion()
+	IntervalUnion(Interval[])
+end
+
+"""
+	empty(iu)
+
+Returns true if the given `IntervalUnion` is empty.
+"""
+function empty(iu::IntervalUnion)
+	(number_of_components(iu) == 0) || all([empty(c) for c in iu.components])
+end
+
+"""
 	string(iu)
 
 Returns a string representation of an `IntervalUnion`.
 """
 function string(iu::IntervalUnion)
-	if number_of_components(iu) == 0
+	if empty(iu)
 		return "∅"
 	elseif number_of_components(iu) == 1
 		return string(iu.components[1])
@@ -617,7 +659,7 @@ Examples:
 """
 function complement(iu::IntervalUnion)
 	components = Interval[]
-	if number_of_components(iu) == 0
+	if empty(iu)
 		return IntervalUnion([Interval(-Inf,true,Inf,true)])
 	elseif number_of_components(iu) == 1
 		if left(iu.components[1]) == -Inf && right(iu.components[1]) == Inf
@@ -703,7 +745,7 @@ end
 Returns a number drawn uniformly at random in the given `IntervalUnion`.
 """
 function sample(iu::IntervalUnion)
-	if number_of_components(iu) == 0
+	if empty(iu)
 		throw("Cannot sample from empty union of Intervals.")
 	end
 	size_components = [cardinal(i) for i in iu.components]

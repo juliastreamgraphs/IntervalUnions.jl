@@ -5,14 +5,23 @@ module IntervalUnions
 
 # Imports
 
-import Base: ==, ∈, ⊆, ∩, ∪, isless, show, string, setdiff, symdiff
+import Base: ==, ∈, ⊆, ∩, ∪, isless, show, string, setdiff, symdiff, empty
 
 # Exports
 export
 	OrderedPair, Interval, IntervalUnion,
 
-	==, ∈, ⊆, ∩, ∪, isless, show, cardinal, left, right, disjoint, string, number_of_components, 
-	complement, sample, jaccard, setdiff, limits, symdiff
+	# Query
+	==, ∈, ⊆, isless, left, right, empty, limits, disjoint,
+
+	# Display
+	show, string,
+
+	# Size
+	number_of_components, cardinal,
+
+	# Operations
+	∩, ∪, complement, jaccard, setdiff, symdiff, sample
 
 # Includes
 
