@@ -1,15 +1,65 @@
+# Tests for empty Interval
+I = Interval()
+# J = [1,2]
+J = Interval(0.0,1.0)
+@test string(I) == "∅"
+@test empty(I)
+@test 0 ∉ I
+@test 1.3 ∉ I
+@test left(I) == 0
+@test right(I) == 0
+@test I ⊆ J
+@test J ⊈ I
+@test I ⊆ I
+@test cardinal(I) == 0
+@test !disjoint(I,J)
+@test !disjoint(J,I)
+@test I ∩ J == Interval()
+@test J ∩ I == Interval()
+@test I ∪ J == J
+@test J ∪ I == J
+@test compact(I) == Interval()
+@test compactness(I) == 0
+@test superset(I) == Interval()
+@test jaccard(I,J) == 0
+@test jaccard(J,I) == 0
+@test jaccard(I,I) == 1
+@test overlap_coefficient(I,J) == 0
+@test overlap_coefficient(J,I) == 0
+@test overlap_coefficient(I,I) == 1
+@test dice_coefficient(I,J) == 0
+@test dice_coefficient(J,I) == 0
+@test dice_coefficient(I,I) == 1
+
 # I = [0,1]
 I = Interval(0.0,1.0)
+@test string(I) == "[0.0,1.0]"
+@test !empty(I)
+
 # J = ]0,1]
 J = Interval(0.0,true,1.0)
+@test string(J) == "]0.0,1.0]"
+@test !empty(J)
+
 # K = ]1,2[
 K = Interval(1,true,2.0,true)
+@test string(K) == "]1,2.0["
+@test !empty(K)
+
 # L = [1,2[
 L = Interval(1,2,true)
+@test string(L) == "[1,2["
+@test !empty(L)
+
 # M = [1,7[
 M = Interval(1,7,true)
+@test string(M) == "[1,7["
+@test !empty(M)
+
 # N = ]-1.3,2.6[
 N = Interval(-1.3,true,2.6,true)
+@test string(N) == "]-1.3,2.6["
+@test !empty(N)
 
 # Tests for left and right limits
 @test left(I) == 0.0
@@ -126,14 +176,86 @@ for s in samples
 	@test 2 < s <= 6
 end
 
+# Tests for superset
+@test superset(I) == I
+@test superset(J) == J
+@test superset(K) == K
+
+# Tests for compact
+@test compact(I) == Interval(0,1)
+@test compact(J) == Interval(0,1)
+@test compact(K) == Interval(1,2)
+@test compact(L) == Interval(1,2)
+@test compact(M) == Interval(1,7)
+@test compact(N) == Interval(-1.3,2.6)
+
+# Tests for compactness
+@test compactness(I) == 1
+@test compactness(J) == 1
+@test compactness(K) == 1
+
 # Tests for jaccard similarity
+# jaccard([0,1],[0,1]) = 1
 @test jaccard(Interval(0,1),Interval(0,1)) == 1.0
+# jaccard(]0,1[,[0,1]) = 1
 @test jaccard(Interval(0,true,1,true),Interval(0,1)) == 1.0
+# jaccard([0,2],[0,1]) = 1/2
 @test jaccard(Interval(0,2),Interval(0,1)) == 0.5
+# jaccard([-1,2],[0,1]) = 1/3
 @test isapprox(jaccard(Interval(-1,2),Interval(0,1)),0.333333333333)
+# jaccard([0,1],[1,2]) = 0
 @test jaccard(Interval(0,1),Interval(1,2)) == 0.0
+# jaccard([0,1],]1,2]) = 0
 @test jaccard(Interval(0,1),Interval(1,true,2)) == 0.0
+# jaccard([0,1],[1,1]) = 0
 @test jaccard(Interval(0,1),Interval(1,1)) == 0.0
+# jaccard([0,1],]1,1[) = 0
 @test jaccard(Interval(0,1),Interval(1,true,1,true)) == 0.0
+# jaccard(]-Inf,0],[0,Inf[) = 0
 @test jaccard(Interval(-Inf,true,0),Interval(0,Inf,true)) == 0.0
+# jaccard(]-Inf,Inf[,]-Inf,Inf[) = 1
 @test jaccard(Interval(-Inf,true,Inf,true),Interval(-Inf,true,Inf,true)) == 1.0
+
+# Tests for overlap coefficient
+# overlap_coefficient([0,1],[0,1]) = 1
+@test overlap_coefficient(Interval(0,1),Interval(0,1)) == 1.0
+# overlap_coefficient(]0,1[,[0,1]) = 1
+@test overlap_coefficient(Interval(0,true,1,true),Interval(0,1)) == 1.0
+# overlap_coefficient([0,2],[0,1]) = 1
+@test overlap_coefficient(Interval(0,2),Interval(0,1)) == 1
+# overlap_coefficient([-1,2],[0,1]) = 1
+@test overlap_coefficient(Interval(-1,2),Interval(0,1)) == 1
+# overlap_coefficient([0,1],[1,2]) = 0
+@test overlap_coefficient(Interval(0,1),Interval(1,2)) == 0.0
+# overlap_coefficient([0,1],]1,2]) = 0
+@test overlap_coefficient(Interval(0,1),Interval(1,true,2)) == 0.0
+# overlap_coefficient([0,1],[1,1]) = 0
+@test overlap_coefficient(Interval(0,1),Interval(1,1)) == 0.0
+# overlap_coefficient([0,1],]1,1[) = 0
+@test overlap_coefficient(Interval(0,1),Interval(1,true,1,true)) == 0.0
+# overlap_coefficient(]-Inf,0],[0,Inf[) = 0
+@test overlap_coefficient(Interval(-Inf,true,0),Interval(0,Inf,true)) == 0.0
+# overlap_coefficient(]-Inf,Inf[,]-Inf,Inf[) = 1
+@test overlap_coefficient(Interval(-Inf,true,Inf,true),Interval(-Inf,true,Inf,true)) == 1.0
+
+# Tests for dice coefficient
+# dice_coefficient([0,1],[0,1]) = 1
+@test dice_coefficient(Interval(0,1),Interval(0,1)) == 1.0
+# dice_coefficient(]0,1[,[0,1]) = 1
+@test dice_coefficient(Interval(0,true,1,true),Interval(0,1)) == 1.0
+# dice_coefficient([0,2],[0,1]) = 2/3
+@test dice_coefficient(Interval(0,2),Interval(0,1)) == 2/3
+# dice_coefficient([-1,2],[0,1]) = 1/2
+@test dice_coefficient(Interval(-1,2),Interval(0,1)) == 1/2
+# dice_coefficient([0,1],[1,2]) = 0
+@test dice_coefficient(Interval(0,1),Interval(1,2)) == 0.0
+# dice_coefficient([0,1],]1,2]) = 0
+@test dice_coefficient(Interval(0,1),Interval(1,true,2)) == 0.0
+# dice_coefficient([0,1],[1,1]) = 0
+@test dice_coefficient(Interval(0,1),Interval(1,1)) == 0.0
+# dice_coefficient([0,1],]1,1[) = 0
+@test dice_coefficient(Interval(0,1),Interval(1,true,1,true)) == 0.0
+# dice_coefficient(]-Inf,0],[0,Inf[) = 0
+@test dice_coefficient(Interval(-Inf,true,0),Interval(0,Inf,true)) == 0.0
+# dice_coefficient(]-Inf,Inf[,]-Inf,Inf[) = 1
+@test dice_coefficient(Interval(-Inf,true,Inf,true),Interval(-Inf,true,Inf,true)) == 1.0

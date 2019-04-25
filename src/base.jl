@@ -290,6 +290,9 @@ function disjoint(i1::Interval, i2::Interval)
 	if i1 == i2
 		return false
 	end
+	if empty(i1) || empty(i2)
+		return false
+	end
 	if i1 < i2
 		if right(i1) < left(i2)
 			return true
@@ -310,9 +313,8 @@ Returns the `Interval` corresponding to the intersection between `Interval` i1 a
 If i1 and i2 are disjoint, this function returns an empty `Interval`.
 """
 function ∩(i1::Interval, i2::Interval)
-    if disjoint(i1,i2)
-        return Interval()
-    end
+    disjoint(i1,i2) && return Interval()
+    (empty(i1) || empty(i2)) && return Interval()
 
     l::Real = left(i2)
     open_left::Bool = i2.open_left
@@ -414,16 +416,17 @@ compact(]0,1])=[0,1]
 ```
 """
 function compact(i::Interval)
+	empty(i) && return Interval()
 	Interval(left(i),right(i))
 end
 
 """
 	compactness(i)
 
-The compactness of a simple `Interval` is always 1.
+The compactness of a simple `Interval` is always 1 unless it is empty.
 """
 function compactness(i::Interval)
-	return 1.0
+	empty(i) ? 0.0 : 1.0
 end
 
 """
@@ -470,9 +473,7 @@ Returns the jaccard similarity between two `Interval`s.
 If |i1 ∪ i2|=0, this function returns 0.
 """
 function jaccard(i1::Interval, i2::Interval)
-	if i1 == i2
-		return 1.0
-	end
+	i1 == i2 && return 1.0
 	u = i1 ∪ i2
 	cardu = cardinal(u)
 	cardu != 0 ? cardinal(i1 ∩ i2) / cardu : 0.0
@@ -489,6 +490,7 @@ This means that if setA is a subset of B or the converse then the overlap coeffi
 Note: If `|A|=0` and `|B|=0`, this function returns 0.
 """
 function overlap_coefficient(i1::Interval, i2::Interval)
+	i1 == i2 && return 1.0
 	denom = min(cardinal(i1),cardinal(i2))
 	denom != 0 ? cardinal(i1 ∩ i2) / denom : 0
 end
@@ -503,6 +505,7 @@ Returns the Sørensen–Dice coefficient between two `Interval`s defined as:
 Note: If `|A|+|B|=0`, this function returns 0.
 """
 function dice_coefficient(i1::Interval, i2::Interval)
+	i1 == i2 && return 1.0
 	denom = cardinal(i1) + cardinal(i2)
 	denom != 0 ? 2 * cardinal(i1 ∩ i2) / denom : 0
 end
@@ -639,9 +642,7 @@ compact(]0,1] ∪ [2,3])=[0,3]
 ```
 """
 function compact(iu::IntervalUnion)
-	if empty(iu)
-		return IntervalUnion()
-	end
+	empty(iu) && return IntervalUnion()
 	l = minimum(left(iu))
 	r = maximum(right(iu))
 	if l == -Inf || r == Inf

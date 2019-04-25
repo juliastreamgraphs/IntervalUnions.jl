@@ -146,3 +146,14 @@ K = IntervalUnion([Interval(0,true,1,true),Interval(1,true,2.6),Interval(2.7,4)]
 @test complement_cardinal(IntervalUnion([Interval(0,1),Interval(4,5)]))==3
 # complement_cardinal(]0,1[ ∪ ]2.5,3] ∪ [3.5,6]) = 2
 @test complement_cardinal(IntervalUnion([Interval(0,true,1,true),Interval(2.5,true,3),Interval(3.5,6)]))==2
+
+# Tests for sampling unions of intervals
+# I = ]-2.3,0[ ∪ ]0,1]
+I = IntervalUnion([Interval(-2.3,true,0,true),Interval(0,true,1)])
+s = sample(I)
+@test (-2.3 < s < 0) || (0 < s <= 1)
+samples = sample(I,100)
+@test length(samples) == 100
+for s in samples
+	@test (-2.3 < s < 0) || (0 < s <= 1)
+end
