@@ -114,6 +114,10 @@ N = Interval(-1.3,true,2.6,true)
 @test I ⊆ N
 @test M ⊈ N
 @test Interval(1,true,2.5) ⊆ Interval(1,true,2.6)
+# [2.2,3[ ⊆ [2,3[
+@test Interval(2.2,3,true) ⊆ Interval(2,3,true)
+# [2.2,3] ⊈ [2,3[
+@test Interval(2.2,3) ⊈ Interval(2,3,true)
 
 # Tests for disjoint
 # [0,1] and [0.5,0.9] are not disjoint
@@ -166,6 +170,8 @@ N = Interval(-1.3,true,2.6,true)
 @test Interval(0.5,1.0) ∪ Interval(0.0,3.5) == Interval(0.0,3.5)
 # [0,1] ∪ ]1,2] = [0,2]
 @test Interval(0,1) ∪ Interval(1,true,2) == Interval(0,2)
+# [1,3] ∪ ]3,4[ = [1,4[
+@test Interval(3,true,4,true) ∪ Interval(1,3) == Interval(1,4,true)
 
 # Tests for sampling intervals
 @test 0 <= sample(Interval(0,1)) <= 1

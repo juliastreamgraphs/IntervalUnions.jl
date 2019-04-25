@@ -820,7 +820,7 @@ function complement(iu::IntervalUnion)
 		return IntervalUnion([Interval(-Inf,true,Inf,true)])
 	elseif number_of_components(iu) == 1
 		if left(iu.components[1]) == -Inf && right(iu.components[1]) == Inf
-			return IntervalUnion([])
+			return IntervalUnion()
 		elseif left(iu.components[1]) == -Inf && right(iu.components[1]) != Inf
 			if iu.components[1].open_right
 				return IntervalUnion([Interval(right(iu.components[1]),Inf,true)])
@@ -829,9 +829,9 @@ function complement(iu::IntervalUnion)
 			end
 		elseif left(iu.components[1]) != -Inf && right(iu.components[1]) == Inf
 			if iu.components[1].open_left
-				return IntervalUnion([Interval(-Inf,true,right(iu.components[1]))])
+				return IntervalUnion([Interval(-Inf,true,left(iu.components[1]))])
 			else
-				return IntervalUnion([Interval(-Inf,true,right(iu.components[1]),true)])
+				return IntervalUnion([Interval(-Inf,true,left(iu.components[1]),true)])
 			end
 		else
 			if iu.components[1].open_left

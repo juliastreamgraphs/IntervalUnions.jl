@@ -35,10 +35,20 @@ J = IntervalUnion([Interval(0,1),Interval(3,true,5)])
 
 # I = [0,1]
 I = IntervalUnion([Interval(0,1)])
+@test string(I) == "[0,1]"
+
 # J = ]1,2.5]
 J = IntervalUnion([Interval(1,true,2.5)])
+@test string(J) == "]1,2.5]"
+
 # K = ]0,1[ ∪ ]1,2.6] ∪ [2.7,4]
 K = IntervalUnion([Interval(0,true,1,true),Interval(1,true,2.6),Interval(2.7,4)])
+@test string(K) == "]0,1[ ∪ ]1,2.6] ∪ [2.7,4]"
+
+# Tests for equality
+@test I == I
+@test I != J
+@test K != J
 
 # Tests for number of components
 @test number_of_components(I) == 1
@@ -108,6 +118,16 @@ K = IntervalUnion([Interval(0,true,1,true),Interval(1,true,2.6),Interval(2.7,4)]
 @test complement(complement(I)) == I
 @test complement(complement(J)) == J
 @test complement(complement(K)) == K
+# complement(]-Inf,Inf[) = ∅
+@test complement(IntervalUnion([Interval(-Inf,true,Inf,true)])) == IntervalUnion()
+# complement(]-Inf,2]) = ]2,Inf[
+@test complement(IntervalUnion([Interval(-Inf,true,2)])) == IntervalUnion([Interval(2,true,Inf,true)])
+# complement(]-Inf,-1.23[) = [-1.23,Inf[
+@test complement(IntervalUnion([Interval(-Inf,true,-1.23,true)])) == IntervalUnion([Interval(-1.23,Inf,true)])
+# complement(]1,Inf[) = ]-Inf,1]
+@test complement(IntervalUnion([Interval(1,true,Inf,true)])) == IntervalUnion([Interval(-Inf,true,1)])
+# complement([-2.76,Inf[) = ]-Inf,-2.76[
+@test complement(IntervalUnion([Interval(-2.76,Inf,true)])) == IntervalUnion([Interval(-Inf,true,-2.76,true)])
 
 # Tests for setdiff
 # setdiff([0,2] ∪ [3,4], [1,3] ∪ [3.5,5]) = [0,1[ ∪ ]3,3.5[
@@ -157,3 +177,7 @@ samples = sample(I,100)
 for s in samples
 	@test (-2.3 < s < 0) || (0 < s <= 1)
 end
+# I = [1,1] ∪ [3.4,3.4] ∪ [6,6]
+I = IntervalUnion([Interval(1,1),Interval(3.4,3.4),Interval(6,6)])
+s = sample(I)
+@test s ∈ [1,3.4,6]
