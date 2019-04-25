@@ -747,6 +747,7 @@ Returns the cardinal of the given `IntervalUnion`.
 ```
 """
 function cardinal(iu::IntervalUnion)
+	empty(iu) && return 0
 	sum([cardinal(i) for i in iu.components])
 end
 

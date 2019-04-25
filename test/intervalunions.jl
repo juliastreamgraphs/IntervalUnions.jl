@@ -1,3 +1,38 @@
+# Tests for empty unions of intervals
+# I = ∅
+I = IntervalUnion()
+# J = [0,1] ∪ ]3,5]
+J = IntervalUnion([Interval(0,1),Interval(3,true,5)])
+@test empty(I)
+@test number_of_components(I) == 0
+@test string(I) == "∅"
+@test cardinal(I) == 0
+@test left(I) == []
+@test right(I) == []
+@test limits(I) == []
+@test compact(I) == IntervalUnion()
+@test compactness(I) == 0
+@test 0 ∉ I
+@test 1.2 ∉ I
+@test I ∩ J == IntervalUnion()
+@test J ∩ I == IntervalUnion()
+@test I ∪ J == J
+@test J ∪ I == J
+@test I ⊆ J
+@test J ⊈ I
+@test I ⊆ I
+@test complement(I) == IntervalUnion([Interval(-Inf,true,Inf,true)])
+@test setdiff(I,J) == IntervalUnion()
+@test setdiff(J,I) == J
+@test symdiff(I,J) == J
+@test symdiff(J,I) == J
+@test jaccard(I,J) == 0
+@test jaccard(J,I) == 0
+@test overlap_coefficient(I,J) == 0
+@test overlap_coefficient(J,I) == 0
+@test dice_coefficient(I,J) == 0
+@test dice_coefficient(J,I) == 0
+
 # I = [0,1]
 I = IntervalUnion([Interval(0,1)])
 # J = ]1,2.5]
