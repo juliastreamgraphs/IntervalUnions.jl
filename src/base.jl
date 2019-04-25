@@ -743,6 +743,11 @@ end
 	IntervalUnion()
 
 Empty union of `Interval`s.
+Ex:
+```
+julia> i = IntervalUnion()
+∅
+```
 """
 function IntervalUnion()
 	IntervalUnion(Interval[])
@@ -752,6 +757,13 @@ end
 	empty(iu)
 
 Returns true if the given `IntervalUnion` is empty.
+Ex:
+```
+julia> empty(IntervalUnion())
+true
+julia> empty(IntervalUnion([Interval(0,1)]))
+false
+```
 """
 function empty(iu::IntervalUnion)
 	(number_of_components(iu) == 0) || all([empty(c) for c in iu.components])
@@ -761,6 +773,11 @@ end
 	string(iu)
 
 Returns a string representation of an `IntervalUnion`.
+Ex:
+```
+julia> string(IntervalUnion([Interval(0,1,true),Interval(1,true,2)]))
+"[0,1[ ∪ ]1,2]"
+```
 """
 function string(iu::IntervalUnion)
 	if empty(iu)
@@ -802,6 +819,15 @@ end
 	left(iu)
 
 Returns a vector of left limits of the given `IntervalUnion`.
+Ex:
+```
+julia> i = IntervalUnion([Interval(0,1,true),Interval(1,true,2)])
+[0,1[ ∪ ]1,2]
+julia> left(i)
+2-element Array{Int64,1}:
+ 0
+ 1
+```
 """
 function left(iu::IntervalUnion)
 	[left(i) for i in iu.components]
@@ -811,6 +837,15 @@ end
 	right(iu)
 
 Returns a vector of right limits of the given `IntervalUnion`.
+Ex:
+```
+julia> i = IntervalUnion([Interval(0,1,true),Interval(1,true,2)])
+[0,1[ ∪ ]1,2]
+julia> left(i)
+2-element Array{Int64,1}:
+ 1
+ 2
+```
 """
 function right(iu::IntervalUnion)
 	[right(i) for i in iu.components]
@@ -820,6 +855,16 @@ end
 	limits(iu)
 
 Returns a sorted array of limits of the given `IntervalUnion`.
+Ex:
+```
+julia> i = IntervalUnion([Interval(0,1,true),Interval(1,true,2)])
+[0,1[ ∪ ]1,2]
+julia> limits(i)
+3-element Array{Real,1}:
+ 0
+ 1
+ 2
+```
 """
 function limits(iu::IntervalUnion)
 	limit_set = Set{Real}()
@@ -837,10 +882,13 @@ end
 """
 	compact(iu)
 
-Returns the compact `IntervalUnion`.
+Returns the compact of the given `IntervalUnion`.
 Ex: 
 ```
-compact(]0,1] ∪ [2,3])=[0,3]
+julia> i = IntervalUnion([Interval(0,true,1),Interval(2,3)])
+]0,1] ∪ [2,3]
+julia> compact(i)
+[0,3]
 ```
 """
 function compact(iu::IntervalUnion)
@@ -861,6 +909,13 @@ Returns the compactness of the given `IntervalUnion` defined as:
 \\frac{ \\left| iu \\right|}{\\left| compact(iu) \\right|}
 ```
 Note: If `|compact(iu)|=0`, this function returns 0.
+Ex:
+```
+julia> i = IntervalUnion([Interval(0,true,1),Interval(3,5)])
+]0,1] ∪ [3,5]
+julia> compactness(i)
+0.6
+```
 """
 function compactness(iu::IntervalUnion)
 	cciu = cardinal(compact(iu))
@@ -873,7 +928,10 @@ end
 Returns the superset of the given `IntervalUnion`.
 Ex: 
 ```
-superset(]0,1] ∪ [2,3])=]0,3]
+julia> i = IntervalUnion([Interval(0,true,1),Interval(2,3)])
+]0,1] ∪ [2,3]
+julia> superset(i)
+]0,3]
 ```
 Note: `superset` and `compact` are strongly related but `compact` is always closed on both sides.
 """
@@ -892,7 +950,10 @@ end
 Returns the complement of the superset of the given `IntervalUnion`.
 Ex:
 ```
-super_complement(]0,1] ∪ [2,3]) = ]-Inf,0] ∪ ]3,Inf[
+julia> i = IntervalUnion([Interval(0,true,1),Interval(2,3)])
+]0,1] ∪ [2,3]
+julia> super_complement(i)
+]-Inf,0] ∪ ]3,Inf[
 ```
 """
 function super_complement(iu::IntervalUnion)
@@ -905,8 +966,14 @@ end
 Returns the complement of iu intersected with its superset.
 Ex:
 ```
-restricted_complement([0,1] ∪ [4,5]) = ]1,4[
-restricted_complement(]0,1[ ∪ ]2.5,3] ∪ [3.5,6]) = [1,2.5] ∪ ]3,3.5[
+julia> i = IntervalUnion([Interval(0,1),Interval(4,5)])
+[0,1] ∪ [4,5]
+julia> restricted_complement(i)
+]1,4[
+julia> j = IntervalUnion([Interval(0,true,1,true),Interval(2.5,true,3),Interval(3.5,6)])
+]0,1[ ∪ ]2.5,3] ∪ [3.5,6]
+julia> restricted_complement(j)
+[1,2.5] ∪ ]3,3.5[
 ```
 """
 function restricted_complement(iu::IntervalUnion)
@@ -919,8 +986,14 @@ end
 Returns the cardinal of the restricted complement of iu.
 Ex:
 ```
-complement_cardinal([0,1] ∪ [4,5]) = 3
-complement_cardinal(]0,1[ ∪ ]2.5,3] ∪ [3.5,6]) = 2
+julia> IntervalUnion([Interval(0,1),Interval(4,5)])
+[0,1] ∪ [4,5]
+julia> complement_cardinal(i)
+3
+julia> j = IntervalUnion([Interval(0,true,1,true),Interval(2.5,true,3),Interval(3.5,6)])
+]0,1[ ∪ ]2.5,3] ∪ [3.5,6]
+julia> complement_cardinal(j)
+2
 ```
 """
 function complement_cardinal(iu::IntervalUnion)
@@ -931,12 +1004,21 @@ end
 	x ∈ iu
 
 Returns true if x ∈ iu and false if x ∉ iu.
+Ex:
+```
+julia> i = IntervalUnion([Interval(0,true,1,true),Interval(2.5,true,3),Interval(3.5,6)])
+]0,1[ ∪ ]2.5,3] ∪ [3.5,6]
+julia> 0.5 ∈ i
+true
+julia> 1 ∈ i
+false
+julia> 0.9999999 ∈ i
+true
+```
 """
 function ∈(x::Real, iu::IntervalUnion)
 	for i in iu.components
-		if x ∈ i
-			return true
-		end
+		x ∈ i && return true
 	end
 	false
 end
@@ -948,6 +1030,13 @@ Returns the cardinal of the given `IntervalUnion`.
 ```math
 \\left| [a,b] ∪ ]c,d] ∪ [e,f[ ∪ ]g,h[ \\right| = (b - a) + (d-c) + (f-e) + (h-g)
 ```
+Ex:
+```
+julia> i = IntervalUnion([Interval(0,true,1,true),Interval(2.5,true,3),Interval(3.5,6)])
+]0,1[ ∪ ]2.5,3] ∪ [3.5,6]
+julia> cardinal(i)
+4.0
+```
 """
 function cardinal(iu::IntervalUnion)
 	empty(iu) && return 0
@@ -958,6 +1047,13 @@ end
 	number_of_components(iu)
 
 Returns the number of components in the given `IntervalUnion`.
+Ex:
+```
+julia> i = IntervalUnion([Interval(0,true,1,true),Interval(2.5,true,3),Interval(3.5,6)])
+]0,1[ ∪ ]2.5,3] ∪ [3.5,6]
+julia> number_of_components(i)
+3
+```
 """
 function number_of_components(iu::IntervalUnion)
 	length(iu.components)
@@ -967,12 +1063,19 @@ end
 	iu1 ⊆ iu2
 
 Returns true if the `IntervalUnion` iu1 is included in the `IntervalUnion` iu2.
+Ex:
+```
+julia> i = IntervalUnion([Interval(0,true,1,true),Interval(2.5,true,3),Interval(3.5,6)])
+]0,1[ ∪ ]2.5,3] ∪ [3.5,6]
+julia> j = IntervalUnion([Interval(2.6,3),Interval(3.5,4,true)])
+[2.6,3] ∪ [3.5,4[
+julia> j ⊆ i
+true
+```
 """
 function ⊆(iu1::IntervalUnion, iu2::IntervalUnion)
     for i in iu1.components
-    	if !any([i ⊆ j for j in iu2.components])
-    		return false
-    	end
+    	!any([i ⊆ j for j in iu2.components]) && return false
     end
     true
 end
@@ -982,6 +1085,21 @@ end
 
 Returns the `IntervalUnion` corresponding to the union between 
 `IntervalUnion` iu1 and `IntervalUnion` iu2.
+Ex:
+```
+julia> i = IntervalUnion([Interval(0,1,true),Interval(1,true,2.3)])
+[0,1[ ∪ ]1,2.3]
+julia> j = IntervalUnion([Interval(1,1),Interval(2.3,true,4,true)])
+[1,1] ∪ ]2.3,4[
+julia> i ∪ j
+[0,4[
+julia> k = IntervalUnion([Interval(-1,0,true),Interval(3,4)])
+[-1,0[ ∪ [3,4]
+julia> i ∪ k
+[-1,1[ ∪ ]1,2.3] ∪ [3,4]
+julia> i ∪ IntervalUnion()
+[0,1[ ∪ ]1,2.3]
+```
 """
 function ∪(iu1::IntervalUnion, iu2::IntervalUnion)
 	IntervalUnion(vcat(iu1.components,iu2.components))
@@ -992,6 +1110,21 @@ end
 
 Returns the `IntervalUnion` corresponding to the intersection between 
 `IntervalUnion` iu1 and `IntervalUnion` iu2.
+Ex:
+```
+julia> i = IntervalUnion([Interval(0,1,true),Interval(1,true,2.3)])
+[0,1[ ∪ ]1,2.3]
+julia> j = IntervalUnion([Interval(1,1),Interval(2.3,true,4,true)])
+[1,1] ∪ ]2.3,4[
+julia> i ∩ j
+∅
+julia> k = IntervalUnion([Interval(-1,0,true),Interval(3,4)])
+[-1,0[ ∪ [3,4]
+julia> j ∩ k
+[3,4[
+julia> i ∩ IntervalUnion()
+∅
+```
 """
 function ∩(iu1::IntervalUnion, iu2::IntervalUnion)
 	components = Interval[]
@@ -1010,11 +1143,27 @@ end
 
 Returns the complement of the given `IntervalUnion`.
 
-Examples:
-	- complement([0,1]) = ]-Inf,0[ ∪ ]1,Inf[
-	- complement([0,0]) = ]-Inf,0[ ∪ ]0,Inf[
-	- complement(]0,0[) = ]-Inf,Inf[
-	- complement([0,1[ ∪ ]2,3]) = ]-Inf,0[ ∪ [1,2] ∪ ]3,Inf[
+Ex:
+```
+julia> i = IntervalUnion([Interval(0,1)])
+[0,1]
+julia> complement(i)
+]-Inf,0[ ∪ ]1,Inf[
+julia> j = IntervalUnion([Interval(0,0)])
+[0,0]
+julia> complement(j)
+]-Inf,0[ ∪ ]0,Inf[
+julia> k = IntervalUnion([Interval(0,true,0,true)])
+]0,0[
+julia> complement(k)
+]-Inf,Inf[
+julia> complement(IntervalUnion())
+]-Inf,Inf[
+julia> l = IntervalUnion([Interval(0,1,true),Interval(2,true,3)])
+[0,1[ ∪ ]2,3]
+julia> complement(l)
+]-Inf,0[ ∪ [1,2] ∪ ]3,Inf[
+```
 """
 function complement(iu::IntervalUnion)
 	components = Interval[]
@@ -1084,6 +1233,17 @@ end
 	setdiff(iu1,iu2)
 
 Returns the `IntervalUnion` with elements in iu1 but not in iu2.
+Ex:
+```
+julia> i = IntervalUnion([Interval(0,1,true),Interval(1,true,2.3)])
+[0,1[ ∪ ]1,2.3]
+julia> j = IntervalUnion([Interval(1,1),Interval(2.3,true,4,true)])
+[1,1] ∪ ]2.3,4[
+julia> k = IntervalUnion([Interval(-1,0,true),Interval(3,4)])
+[-1,0[ ∪ [3,4]
+julia> julia> setdiff(j,k)
+[1,1] ∪ ]2.3,3[
+```
 """
 function setdiff(iu1::IntervalUnion, iu2::IntervalUnion)
 	complement(iu2) ∩ iu1
@@ -1093,6 +1253,19 @@ end
 	symdiff(iu1,iu2)
 
 Returns the `IntervalUnion` with elements in iu1 or iu2 but not in both.
+Ex:
+```
+julia> i = IntervalUnion([Interval(0,1,true),Interval(1,true,2.3)])
+[0,1[ ∪ ]1,2.3]
+julia> j = IntervalUnion([Interval(1,1),Interval(2.3,true,4,true)])
+[1,1] ∪ ]2.3,4[
+julia> k = IntervalUnion([Interval(-1,0,true),Interval(3,4)])
+[-1,0[ ∪ [3,4]
+julia> symdiff(i,k)
+[-1,1[ ∪ ]1,2.3] ∪ [3,4]
+julia> symdiff(j,k)
+[-1,0[ ∪ [1,1] ∪ ]2.3,3[ ∪ [4,4]
+```
 """
 function symdiff(iu1::IntervalUnion, iu2::IntervalUnion)
 	setdiff(iu1 ∪ iu2, iu1 ∩ iu2)
@@ -1102,6 +1275,13 @@ end
 	sample(iu)
 
 Returns a number drawn uniformly at random in the given `IntervalUnion`.
+Ex:
+```
+julia> i = IntervalUnion([Interval(0,1,true),Interval(1,true,2.3)])
+[0,1[ ∪ ]1,2.3]
+julia> sample(i)
+0.22557298488974253
+```
 """
 function sample(iu::IntervalUnion)
 	if empty(iu)
@@ -1123,6 +1303,17 @@ end
 	sample(iu,n)
 
 Returns an array of n random numbers drawn uniformly in the given `IntervalUnion`.
+Ex:
+```
+julia> i = IntervalUnion([Interval(0,1,true),Interval(1,true,2.3)])
+[0,1[ ∪ ]1,2.3]
+julia> sample(i,4)
+4-element Array{Float64,1}:
+ 0.7974550091944592 
+ 0.36823887828930935
+ 1.1796141777238074 
+ 2.2731170537623138
+```
 """
 function sample(iu::IntervalUnion, n::Int64)
 	[sample(iu) for x in 1:n]
@@ -1133,6 +1324,19 @@ end
 
 Returns the jaccard similarity between two `IntervalUnion`s.
 If |iu1 ∪ iu2|=0, this function returns 0.
+Ex:
+```
+julia> i = IntervalUnion([Interval(0,1,true),Interval(1,true,2.3)])
+[0,1[ ∪ ]1,2.3]
+julia> j = IntervalUnion([Interval(1,1),Interval(2.3,true,4,true)])
+[1,1] ∪ ]2.3,4[
+julia> k = IntervalUnion([Interval(-1,0,true),Interval(3,4)])
+[-1,0[ ∪ [3,4]
+julia> jaccard(i,j)
+0.0
+julia> jaccard(j,k)
+0.37037037037037035
+```
 """
 function jaccard(iu1::IntervalUnion, iu2::IntervalUnion)
 	u = iu1 ∪ iu2
@@ -1149,6 +1353,19 @@ Returns the overlap coefficient between two `IntervalUnion`s defined as:
 ```
 This means that if set A is a subset of B or the converse then the overlap coefficient is equal to 1.
 Note: If `|A|=0` and `|B|=0`, this function returns 0.
+Ex:
+```
+julia> i = IntervalUnion([Interval(0,1,true),Interval(1,true,2.3)])
+[0,1[ ∪ ]1,2.3]
+julia> j = IntervalUnion([Interval(1,1),Interval(2.3,true,4,true)])
+[1,1] ∪ ]2.3,4[
+julia> k = IntervalUnion([Interval(-1,0,true),Interval(3,4)])
+[-1,0[ ∪ [3,4]
+julia> overlap_coefficient(i,j)
+0.0
+julia> overlap_coefficient(j,k)
+0.588235294117647
+```
 """
 function overlap_coefficient(iu1::IntervalUnion, iu2::IntervalUnion)
 	denom = min(cardinal(iu1),cardinal(iu2))
@@ -1163,6 +1380,19 @@ Returns the Sørensen–Dice coefficient between two `IntervalUnion`s defined as
 \\frac{2 \\left| A \\cap B \\right|}{\\left|A \\right| + \\left|B \\right|}
 ```
 Note: If `|A|+|B|=0`, this function returns 0.
+Ex:
+```
+julia> i = IntervalUnion([Interval(0,1,true),Interval(1,true,2.3)])
+[0,1[ ∪ ]1,2.3]
+julia> j = IntervalUnion([Interval(1,1),Interval(2.3,true,4,true)])
+[1,1] ∪ ]2.3,4[
+julia> k = IntervalUnion([Interval(-1,0,true),Interval(3,4)])
+[-1,0[ ∪ [3,4]
+julia> dice_coefficient(i,j)
+0.0
+julia> dice_coefficient(j,k)
+0.5405405405405405
+```
 """
 function dice_coefficient(iu1::IntervalUnion, iu2::IntervalUnion)
 	denom = cardinal(iu1) + cardinal(iu2)
