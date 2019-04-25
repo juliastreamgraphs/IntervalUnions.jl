@@ -83,3 +83,31 @@ K = IntervalUnion([Interval(0,true,1,true),Interval(1,true,2.6),Interval(2.7,4)]
 # Tests for symdiff
 # symdiff([0,1], ]0,1[ ∪ ]1,2.6] ∪ [2.7,4]) =[0,0] ∪ [1,2.6] ∪ [2.7,4]
 @test symdiff(I,K) == IntervalUnion([Interval(0,0),Interval(1,2.6),Interval(2.7,4)])
+
+# Tests for compact
+# compact(]0,1] ∪ [2,3])=[0,3]
+@test compact(IntervalUnion([Interval(0,true,1),Interval(2,3)]))==IntervalUnion([Interval(0,3)])
+
+# Tests for compactness
+# compactness(]0,1] ∪ [2,3])=2/3
+@test compactness(IntervalUnion([Interval(0,true,1),Interval(2,3)]))==2/3
+
+# Tests for superset
+# superset(]0,1] ∪ [2,3])=]0,3]
+@test superset(IntervalUnion([Interval(0,true,1),Interval(2,3)]))==IntervalUnion([Interval(0,true,3)])
+
+# Tests for super_complement
+# super_complement(]0,1] ∪ [2,3]) = ]-Inf,0] ∪ ]3,Inf[
+@test super_complement(IntervalUnion([Interval(0,true,1),Interval(2,3)]))==IntervalUnion([Interval(-Inf,true,0),Interval(3,true,Inf,true)])
+
+# Tests for restricted_complement
+# restricted_complement([0,1] ∪ [4,5]) = ]1,4[
+@test restricted_complement(IntervalUnion([Interval(0,1),Interval(4,5)]))==IntervalUnion([Interval(1,true,4,true)])
+# restricted_complement(]0,1[ ∪ ]2.5,3] ∪ [3.5,6]) = [1,2.5] ∪ ]3,3.5[
+@test restricted_complement(IntervalUnion([Interval(0,true,1,true),Interval(2.5,true,3),Interval(3.5,6)]))==IntervalUnion([Interval(1,2.5),Interval(3,true,3.5,true)])
+
+# Tests for complement_cardinal
+# complement_cardinal([0,1] ∪ [4,5]) = 3
+@test complement_cardinal(IntervalUnion([Interval(0,1),Interval(4,5)]))==3
+# complement_cardinal(]0,1[ ∪ ]2.5,3] ∪ [3.5,6]) = 2
+@test complement_cardinal(IntervalUnion([Interval(0,true,1,true),Interval(2.5,true,3),Interval(3.5,6)]))==2

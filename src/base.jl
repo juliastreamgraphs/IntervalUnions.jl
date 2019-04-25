@@ -405,6 +405,37 @@ function symdiff(i1::Interval, i2::Interval)
 end
 
 """
+	compact(i)
+
+Returns the compact `Interval`.
+Ex: 
+```
+compact(]0,1])=[0,1]
+```
+"""
+function compact(i::Interval)
+	Interval(left(i),right(i))
+end
+
+"""
+	compactness(i)
+
+The compactness of a simple `Interval` is always 1.
+"""
+function compactness(i::Interval)
+	return 1.0
+end
+
+"""
+	superset(i)
+
+The superset of a simple `Interval` is the interval itself.
+"""
+function superset(i::Interval)
+	return i
+end
+
+"""
 	sample(i)
 
 Returns a number drawn uniformly at random in the given `Interval`.
@@ -596,6 +627,101 @@ function limits(iu::IntervalUnion)
 		push!(limit_array,l)
 	end
 	sort(limit_array)
+end
+
+"""
+	compact(iu)
+
+Returns the compact `IntervalUnion`.
+Ex: 
+```
+compact(]0,1] ∪ [2,3])=[0,3]
+```
+"""
+function compact(iu::IntervalUnion)
+	if empty(iu)
+		return IntervalUnion()
+	end
+	l = minimum(left(iu))
+	r = maximum(right(iu))
+	if l == -Inf || r == Inf
+		throw("IntervalUnion $(string(iu)) has no compact.")
+	end
+	IntervalUnion([Interval(l,r)])
+end
+
+"""
+	compactness(iu)
+
+Returns the compactness of the given `IntervalUnion` defined as:
+```math
+\\frac{ \\left| iu \\right|}{\\left| compact(iu) \\right|}
+```
+Note: If `|compact(iu)|=0`, this function returns 0.
+"""
+function compactness(iu::IntervalUnion)
+	cciu = cardinal(compact(iu))
+	cciu != 0 ? cardinal(iu) / cciu : 0
+end
+
+"""
+	superset(iu)
+
+Returns the superset of the given `IntervalUnion`.
+Ex: 
+```
+superset(]0,1] ∪ [2,3])=]0,3]
+```
+Note: `superset` and `compact` are strongly related but `compact` is always closed on both sides.
+"""
+function superset(iu::IntervalUnion)
+	if empty(iu) || number_of_components(iu) < 2
+		throw("IntervalUnion $(string(iu)) has not enough components.")
+	end
+	smallest = minimum(iu.components)
+	largest  = maximum(iu.components)
+	IntervalUnion([Interval(left(smallest), smallest.open_left, right(largest), largest.open_right)]) 
+end
+
+"""
+	super_complement(iu)
+
+Returns the complement of the superset of the given `IntervalUnion`.
+Ex:
+```
+super_complement(]0,1] ∪ [2,3]) = ]-Inf,0] ∪ ]3,Inf[
+```
+"""
+function super_complement(iu::IntervalUnion)
+	complement(superset(iu))
+end
+
+"""
+	restricted_complement(iu)
+
+Returns the complement of iu intersected with its superset.
+Ex:
+```
+restricted_complement([0,1] ∪ [4,5]) = ]1,4[
+restricted_complement(]0,1[ ∪ ]2.5,3] ∪ [3.5,6]) = [1,2.5] ∪ ]3,3.5[
+```
+"""
+function restricted_complement(iu::IntervalUnion)
+	superset(iu) ∩ complement(iu)
+end
+
+"""
+	complement_cardinal(iu)
+
+Returns the cardinal of the restricted complement of iu.
+Ex:
+```
+complement_cardinal([0,1] ∪ [4,5]) = 3
+complement_cardinal(]0,1[ ∪ ]2.5,3] ∪ [3.5,6]) = 2
+```
+"""
+function complement_cardinal(iu::IntervalUnion)
+	cardinal(restricted_complement(iu))
 end
 
 """
