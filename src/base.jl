@@ -2,6 +2,11 @@
 	OrderedPair
 
 OrderedPair representation.
+Ex:
+```
+julia> o = OrderedPair(1,3.2)
+(1,3.2)
+```
 """
 mutable struct OrderedPair
 	left::Real
@@ -49,6 +54,19 @@ end
 	Interval
 
 `Interval` representation.
+Attributes:
+	- limits::OrderedPair : The left and right limits of the interval.
+	- open_left::Bool : Set to true if the interval is open on the left.
+	- open_right::Bool : Set to true if the interval is open on the right.
+Ex:
+```
+julia> i = Interval(0,1)
+[0,1]
+julia> j = Interval(1,true,3.4)
+]1,3.4]
+julia> k = Interval(-1,true,3.12,true)
+]-1,3.12[
+```
 """
 mutable struct Interval
     limits::OrderedPair
@@ -69,30 +87,39 @@ end
 	i1 < i2
 
 Lexicographical order for `Interval`.
+Ex:
+```
+julia> Interval(0,2) < Interval(1,2,true)
+true
+julia> Interval(1,3) > Interval(-1,10)
+true
+julia> Interval(0,1) < Interval(0,1,true)
+true
+```
 """
 function isless(i1::Interval, i2::Interval)
 	if left(i1) < left(i2)
-        true
+        return true
     elseif left(i1) == left(i2)
         if !i1.open_left & i2.open_left
-        	true
+        	return true
         elseif i1.open_left & !i2.open_left
-        	false
+        	return false
         else
         	if right(i1) < right(i2)
-        		true
+        		return true
         	elseif right(i1) == right(i2)
         		if !i1.open_right & i2.open_right
-        			true
+        			return true
         		else
-        			false
+        			return false
         		end
         	else
-        		false
+        		return false
         	end
         end
     else
-        false
+        return false
     end
 end
 
@@ -105,6 +132,13 @@ Requires:
 	- open_left::Bool Set to true if the interval is open on the left.
 	- right::Real Right limit of the interval.
 	- open_right::Bool Set to true if the interval is open on the left.
+Ex:
+```
+julia> i = Interval(0,false,1,true)
+[0,1[
+julia> j = Interval(1,false,2,false)
+[1,2]
+```
 """
 function Interval(left::Real, open_left::Bool, right::Real, open_right::Bool)
 	p = OrderedPair(left,right)
@@ -118,6 +152,11 @@ Simplified constructor for closed `Interval`.
 Requires:
 	- left::Real Left limit of the interval.
 	- right::Real Right limit of the interval.
+Ex:
+```
+julia> i = Interval(0,2)
+[0,2]
+```
 """
 function Interval(left::Real, right::Real)
 	p = OrderedPair(left,right)
@@ -132,6 +171,11 @@ Requires:
 	- left::Real Left limit of the interval.
 	- open_left::Bool Set to true if the interval is open on the left.
 	- right::Real Right limit of the interval.
+Ex:
+```
+julia> i = Interval(2,true,3)
+]2,3]
+```
 """
 function Interval(left::Real, open_left::Bool, right::Real)
 	p = OrderedPair(left,right)
@@ -146,6 +190,11 @@ Requires:
 	- left::Real Left limit of the interval.
 	- right::Real Right limit of the interval.
 	- open_right::Bool Set to true if the interval is open on the right.
+Ex:
+```
+julia> i = Interval(-1,2,true)
+[-1,2[
+```
 """
 function Interval(left::Real, right::Real, open_right::Bool)
 	p = OrderedPair(left,right)
@@ -156,6 +205,11 @@ end
 	Interval()
 
 Empty `Interval`.
+Ex:
+```
+julia> i = Interval()
+∅
+```
 """
 function Interval()
 	Interval(0,true,0,true)
@@ -165,6 +219,13 @@ end
 	left(i)
 
 Returns the left limit of the given `Interval`.
+Ex:
+```
+julia> i = Interval(0,2)
+[0,2]
+julia> left(i)
+0
+```
 """
 function left(i::Interval)
 	i.limits.left
@@ -174,6 +235,13 @@ end
 	right(i)
 
 Returns the right limit of the given `Interval`.
+Ex:
+```
+julia> i = Interval(0,2)
+[0,2]
+julia> right(i)
+2
+```
 """
 function right(i::Interval)
 	i.limits.right
@@ -183,6 +251,17 @@ end
 	empty(i)
 
 Returns true if the given `Interval` is empty.
+Ex:
+```
+julia> i = Interval(0,1)
+[0,1]
+julia> empty(i)
+false
+julia> j = Interval()
+∅
+julia> empty(j)
+true
+```
 """
 function empty(i::Interval)
 	(left(i) == right(i)) && i.open_left && i.open_right
@@ -192,11 +271,16 @@ end
 	string(i)
 
 Returns a string representation of an `Interval`.
+Ex:
+```
+julia> i = Interval(0,1)
+[0,1]
+julia> string(i)
+"[0,1]"
+```
 """
 function string(i::Interval)
-	if empty(i)
-		return "∅"
-	end
+	empty(i) && return "∅"
 	if i.open_left
         i.open_right ? "]$(left(i)),$(right(i))[" : "]$(left(i)),$(right(i))]"
     else
@@ -217,6 +301,19 @@ end
 	x ∈ i
 
 Returns true if x ∈ i and false if x ∉ i.
+Ex:
+```
+julia> i = Interval(-1,true,2)
+]-1,2]
+julia> 0 ∈ i
+true
+julia> 2 ∈ i
+true
+julia> -1 ∈ i
+false
+julia> -0.9999999 ∈ i
+true
+```
 """
 function ∈(x::Real, i::Interval)
     if i.open_left
@@ -230,6 +327,21 @@ end
 	i1 ⊆ i2
 
 Returns true if the interval i1 is included in the interval i2.
+Ex:
+```
+julia> i = Interval(0,3)
+[0,3]
+julia> j = Interval(1,2)
+[1,2]
+julia> j ⊆ i
+true
+julia> k = Interval(0,true,3,true)
+]0,3[
+julia> k ⊆ i
+true
+julia> i ⊈ k
+true
+```
 """
 function ⊆(i1::Interval, i2::Interval)
     if i2.open_left
@@ -270,12 +382,20 @@ end
 """
 	cardinal(i)
 
-Returns the cardinal of the given `Interval`.
+Returns the cardinal of the given `Interval` defined as:
 ```math
 \\left| [a,b] \\right| = b - a
 ```
-
-Warning: An `Interval` can be non empty and have a cardinal of zero (ex: [1,1]).
+**Warning:** An `Interval` can be non empty and have a cardinal of zero (ex: [1,1]).
+Ex:
+```
+julia> i = Interval(1,true,3)
+]1,3]
+julia> cardinal(i)
+2
+julia> cardinal(Interval(1,1))
+0
+```
 """
 function cardinal(i::Interval)
 	right(i) - left(i)
@@ -285,14 +405,23 @@ end
 	disjoint(i1,i2)
 
 Returns true if interval i1 and interval i2 are disjoint, false otherwise.
+Ex:
+```
+julia> i = Interval(0,1,true)
+[0,1[
+julia> j = Interval(1,true,2)
+]1,2]
+julia> disjoint(i,j)
+true
+julia> k = Interval(-1,0)
+]-1,0]
+julia> disjoint(i,k)
+false
+```
 """
 function disjoint(i1::Interval, i2::Interval)
-	if i1 == i2
-		return false
-	end
-	if empty(i1) || empty(i2)
-		return false
-	end
+	i1 == i2 && return false
+	(empty(i1) || empty(i2)) && return false
 	if i1 < i2
 		if right(i1) < left(i2)
 			return true
@@ -311,6 +440,15 @@ end
 
 Returns the `Interval` corresponding to the intersection between `Interval` i1 and `Interval` i2.
 If i1 and i2 are disjoint, this function returns an empty `Interval`.
+Ex:
+```
+julia> i = Interval(0,1,true)
+[0,1[
+julia> j = Interval(0.8,true,1.2)
+]0.8,1.2]
+julia> i ∩ j
+]0.8,1[
+```
 """
 function ∩(i1::Interval, i2::Interval)
     disjoint(i1,i2) && return Interval()
@@ -335,11 +473,7 @@ function ∩(i1::Interval, i2::Interval)
         open_right = i1.open_right | i2.open_right 
     end
 
-    if l==r
-    	return Interval(OrderedPair(l,r),false,false)
-    else
-	    return Interval(OrderedPair(l,r),open_left,open_right)
-	end
+    l == r ? Interval(OrderedPair(l,r),false,false) : Interval(OrderedPair(l,r),open_left,open_right)
 end
 
 
@@ -349,6 +483,15 @@ end
 Returns the `Interval` corresponding to the union between `Interval` i1 and `Interval` i2.
 If i1 and i2 are disjoint, this function raises an error since the results wouldn't be an `Interval`.
 Please use the `IntervalUnion` type to work with unions of disjoint intervals.
+Ex:
+```
+julia> i = Interval(0,1,true)
+[0,1[
+julia> j = Interval(0.8,true,1.2)
+]0.8,1.2]
+julia> i ∪ j
+[0,1.2]
+```
 """
 function ∪(i1::Interval,i2::Interval)
     if disjoint(i1,i2)
@@ -379,11 +522,7 @@ function ∪(i1::Interval,i2::Interval)
         open_right = i1.open_right & i2.open_right
     end
 
-    if l==r
-    	return Interval(OrderedPair(l,r),false,false)
-    else
-	    return Interval(OrderedPair(l,r),open_left,open_right)
-	end
+    l == r ? Interval(OrderedPair(l,r),false,false) : Interval(OrderedPair(l,r),open_left,open_right)
 end
 
 """
@@ -409,10 +548,13 @@ end
 """
 	compact(i)
 
-Returns the compact `Interval`.
+Returns the compact of the given `Interval`.
 Ex: 
 ```
-compact(]0,1])=[0,1]
+julia> i = Interval(0,true,1)
+]0,1]
+julia> compact(i)
+[0,1]
 ```
 """
 function compact(i::Interval)
@@ -423,7 +565,14 @@ end
 """
 	compactness(i)
 
-The compactness of a simple `Interval` is always 1 unless it is empty.
+Retuns the compactness of a simple `Interval`, which is always 1 unless it is empty.
+Ex:
+```
+julia> compactness(Interval(0,true,1))
+1.0
+julia> compactness(Interval())
+0.0
+```
 """
 function compactness(i::Interval)
 	empty(i) ? 0.0 : 1.0
@@ -432,7 +581,12 @@ end
 """
 	superset(i)
 
-The superset of a simple `Interval` is the interval itself.
+Returns the superset of the given `Interval`, which is the `Interval` itself.
+Ex:
+```
+julia> superset(Interval(0,true,1))
+]0,1]
+```
 """
 function superset(i::Interval)
 	return i
@@ -442,6 +596,13 @@ end
 	sample(i)
 
 Returns a number drawn uniformly at random in the given `Interval`.
+Ex:
+```
+julia> i = Interval(2,4,true)
+[2,4[
+julia> sample(i)
+3.935796996224805
+```
 """
 function sample(i::Interval)
 	if cardinal(i) == 0 && (i.open_left && i.open_right)
@@ -461,6 +622,17 @@ end
 	sample(i,n)
 
 Returns an array of n random numbers drawn uniformly in the given `Interval`.
+Ex:
+```
+julia> i = Interval(3,true,6)
+]3,6]
+julia> sample(i,4)
+4-element Array{Float64,1}:
+ 5.543827369817867 
+ 4.678054798740224 
+ 3.1740822420010355
+ 3.6870186624440504
+```
 """
 function sample(i::Interval, n::Int64)
 	[sample(i) for x in 1:n]
@@ -469,8 +641,20 @@ end
 """
 	jaccard(i1,i2)
 
-Returns the jaccard similarity between two `Interval`s.
-If |i1 ∪ i2|=0, this function returns 0.
+Returns the jaccard coefficient between two `Interval`s defined as:
+```math
+\\frac{\\left| A \\cap B \\right|}{\\left| A \\cup B \\right|}
+```
+Note: If |i1 ∪ i2|=0, this function returns 0.
+Ex:
+```
+julia> i = Interval(3,true,6)
+]3,6]
+julia> j = Interval(4,7)
+[4,7]
+julia> jaccard(i,j)
+0.5
+```
 """
 function jaccard(i1::Interval, i2::Interval)
 	i1 == i2 && return 1.0
@@ -488,6 +672,15 @@ Returns the overlap coefficient between two `Interval`s defined as:
 ```
 This means that if setA is a subset of B or the converse then the overlap coefficient is equal to 1.
 Note: If `|A|=0` and `|B|=0`, this function returns 0.
+Ex:
+```
+julia> i = Interval(3,true,6)
+]3,6]
+julia> j = Interval(4,7)
+[4,7]
+julia> overlap_coefficient(i,j)
+0.6666666666666666
+```
 """
 function overlap_coefficient(i1::Interval, i2::Interval)
 	i1 == i2 && return 1.0
@@ -503,6 +696,15 @@ Returns the Sørensen–Dice coefficient between two `Interval`s defined as:
 \\frac{2 \\left| A \\cap B \\right|}{\\left|A \\right| + \\left|B \\right|}
 ```
 Note: If `|A|+|B|=0`, this function returns 0.
+Ex:
+```
+julia> i = Interval(3,true,6)
+]3,6]
+julia> j = Interval(4,7)
+[4,7]
+julia> dice_coefficient(i,j)
+0.6666666666666666
+```
 """
 function dice_coefficient(i1::Interval, i2::Interval)
 	i1 == i2 && return 1.0
