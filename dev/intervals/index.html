@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Intervals · IntervalUnions.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link href="../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>IntervalUnions.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../">Getting Started</a></li><li class="current"><a class="toctext" href>Intervals</a><ul class="internal"><li><a class="toctext" href="#Example-Usage-1">Example Usage</a></li></ul></li><li><a class="toctext" href="../intervalunions/">IntervalUnions</a></li></ul></nav><article id="docs"><header><nav><ul><li><a href>Intervals</a></li></ul><a class="edit-page" href="https://github.com/juliastreamgraphs/IntervalUnions.jl/blob/master/docs/src/intervals.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Intervals</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Intervals-1" href="#Intervals-1">Intervals</a></h1><p>The type <code>Interval</code> implements a basic interval of real numbers like <code>[0,1]</code> or <code>]2.1,3.14]</code>. The following section gives some basic examples of operations on <code>Interval</code>s. Note that unions of disjoint <code>Interval</code>s cannot be computed and will throw an error. To work with disjoint intervals, use <code>IntervalUnions</code> instead. </p><h2><a class="nav-anchor" id="Example-Usage-1" href="#Example-Usage-1">Example Usage</a></h2><h3><a class="nav-anchor" id="Interval-Definition-1" href="#Interval-Definition-1">Interval Definition</a></h3><p>An <code>Interval</code> is defined as:</p><ul><li>A left limit, which has to be a <code>Real</code> number.</li><li>A right limit, which has to be a <code>Real</code> number.</li><li>Two booleans indicating whether the interval is closed on each side.</li></ul><p>The full constructor enables to specify each attribute directly:</p><pre><code class="language-julia">julia&gt; l = Interval(1.6,true,2.3,true)
-]1.6,2.3[</code></pre><p>Since <code>Interval</code>s are most of the time closed on both side, a simplified constructor can be used as a shortcut:</p><pre><code class="language-julia">julia&gt; i = Interval(0,1)
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Intervals · IntervalUnions.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link href="../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>IntervalUnions.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../">Getting Started</a></li><li class="current"><a class="toctext" href>Intervals</a><ul class="internal"><li><a class="toctext" href="#Example-Usage-1">Example Usage</a></li></ul></li><li><a class="toctext" href="../intervalunions/">IntervalUnions</a></li></ul></nav><article id="docs"><header><nav><ul><li><a href>Intervals</a></li></ul><a class="edit-page" href="https://github.com/juliastreamgraphs/IntervalUnions.jl/blob/master/docs/src/intervals.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Intervals</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Intervals-1" href="#Intervals-1">Intervals</a></h1><p>The type <code>Interval</code> implements a basic interval of real numbers like <code>[0,1]</code> or <code>]2.1,3.14]</code>. The following section gives some basic examples of operations on <code>Intervals</code>. Note that unions of disjoint <code>Intervals</code> cannot be computed and will throw an error. To work with disjoint intervals, use <code>IntervalUnions</code> instead. </p><h2><a class="nav-anchor" id="Example-Usage-1" href="#Example-Usage-1">Example Usage</a></h2><h3><a class="nav-anchor" id="Interval-Definition-1" href="#Interval-Definition-1">Interval Definition</a></h3><p>An <code>Interval</code> is defined as:</p><ul><li>A left limit, which has to be a <code>Real</code> number.</li><li>A right limit, which has to be a <code>Real</code> number.</li><li>Two booleans indicating whether the interval is closed on each side.</li></ul><p>The full constructor enables to specify each attribute directly:</p><pre><code class="language-julia">julia&gt; l = Interval(1.6,true,2.3,true)
+]1.6,2.3[</code></pre><p>Since <code>Intervals</code> are most of the time closed on both side, a simplified constructor can be used as a shortcut:</p><pre><code class="language-julia">julia&gt; i = Interval(0,1)
 [0,1]
 julia&gt; i = Interval(0,false,1,false)
 [0,1]</code></pre><p>It is possible to omit closed limits:</p><pre><code class="language-julia">julia&gt; j = Interval(0.2,true,2)
@@ -10,8 +10,8 @@ julia&gt; j = Interval(0.2,true,2,false)
 julia&gt; k = Interval(2,3,true)
 [2,3[
 julia&gt; k = Interval(2,false,3,true)
-[2,3[</code></pre><p>Finally, the empty interval can be constructed with no argument:</p><pre><code class="language-julia">julia&gt; m = Interval()
-∅</code></pre><h3><a class="nav-anchor" id="Basic-queries-1" href="#Basic-queries-1">Basic queries</a></h3><p>Once an <code>Interval</code> is built, one has access to very simple queries to inspect the interval:</p><pre><code class="language-julia">julia&gt; i = Interval(0,2)
+[2,3[</code></pre><p>Finally, the empty <code>Interval</code> can be constructed with no argument:</p><pre><code class="language-julia">julia&gt; m = Interval()
+∅</code></pre><h3><a class="nav-anchor" id="Basic-queries-1" href="#Basic-queries-1">Basic queries</a></h3><p>Once an <code>Interval</code> is built, one has access to very simple queries:</p><pre><code class="language-julia">julia&gt; i = Interval(0,2)
 [0,2]
 julia&gt; left(i)
 0
@@ -26,12 +26,12 @@ julia&gt; cardinal(i)
 julia&gt; cardinal(Interval(1,1))
 0
 julia&gt; cardinal(Interval())
-0</code></pre><h3><a class="nav-anchor" id="Order-1" href="#Order-1">Order</a></h3><p><code>Interval</code>s implement a lexicographical order:</p><pre><code class="language-julia">julia&gt; Interval(0,2) &lt; Interval(1,2,true)
+0</code></pre><h3><a class="nav-anchor" id="Order-1" href="#Order-1">Order</a></h3><p><code>Intervals</code> implement a lexicographical order:</p><pre><code class="language-julia">julia&gt; Interval(0,2) &lt; Interval(1,2,true)
 true
 julia&gt; Interval(1,3) &gt; Interval(-1,10)
 true
 julia&gt; Interval(0,1) &lt; Interval(0,1,true)
-true</code></pre><h3><a class="nav-anchor" id="Inclusivity-1" href="#Inclusivity-1">Inclusivity</a></h3><p>It is possible to check if a given number belongs to an interval:</p><pre><code class="language-julia">julia&gt; i = Interval(0,1)
+true</code></pre><h3><a class="nav-anchor" id="Inclusivity-1" href="#Inclusivity-1">Inclusivity</a></h3><p>It is possible to check if a given number belongs to an <code>Interval</code>:</p><pre><code class="language-julia">julia&gt; i = Interval(0,1)
 [0,1]
 julia&gt; 0 in i
 true
@@ -42,14 +42,14 @@ julia&gt; j = Interval(0,1,true)
 julia&gt; 1 ∈ j
 false
 julia&gt; 0.99999999 in j
-true</code></pre><p>It is also possible to check if an interval is included in another one:</p><pre><code class="language-julia">julia&gt; i = Interval(0,1)
+true</code></pre><p>It is also possible to check if an <code>Interval</code> is included in another one:</p><pre><code class="language-julia">julia&gt; i = Interval(0,1)
 [0,1]
 julia&gt; j = Interval(0,1,true)
 [0,1[
 julia&gt; j ⊆ i
 true
 julia&gt; i ⊆ j
-false</code></pre><p>Or if two intervals are disjoint:</p><pre><code class="language-julia">julia&gt; i = Interval(0,1,true)
+false</code></pre><p>Or if two <code>Intervals</code> are disjoint:</p><pre><code class="language-julia">julia&gt; i = Interval(0,1,true)
 [0,1[
 julia&gt; j = Interval(1,true,2)
 ]1,2]
@@ -58,7 +58,7 @@ true
 julia&gt; k = Interval(-1,0)
 ]-1,0]
 julia&gt; disjoint(i,k)
-false</code></pre><h3><a class="nav-anchor" id="Intersection-1" href="#Intersection-1">Intersection</a></h3><p>We can compute the intersection of two <code>Interval</code>s:</p><pre><code class="language-julia">julia&gt; i = Interval(0,1)
+false</code></pre><h3><a class="nav-anchor" id="Intersection-1" href="#Intersection-1">Intersection</a></h3><p>We can compute the intersection of two <code>Intervals</code>:</p><pre><code class="language-julia">julia&gt; i = Interval(0,1)
 [0,1]
 julia&gt; j = Interval(0.4,true,1,true)
 ]0.4,1[
@@ -71,14 +71,14 @@ julia&gt; i ∩ k
 julia&gt; intersect(k,j)
 ]0.4,0.8[
 julia&gt; intersect(i,Interval())
-∅</code></pre><h3><a class="nav-anchor" id="Union-1" href="#Union-1">Union</a></h3><p>We can compute theunion of two <code>Interval</code>s:</p><pre><code class="language-julia">julia&gt; i = Interval(0,1)
+∅</code></pre><h3><a class="nav-anchor" id="Union-1" href="#Union-1">Union</a></h3><p>We can compute the union of two <code>Intervals</code>:</p><pre><code class="language-julia">julia&gt; i = Interval(0,1)
 [0,1]
 julia&gt; j = Interval(0.4,true,2.1,true)
 ]0.4,2.1[
 julia&gt; i ∪ j
 [0,2.1[
 julia&gt; i ∪ Interval()
-[0,1]</code></pre><h3><a class="nav-anchor" id="Sampling-1" href="#Sampling-1">Sampling</a></h3><p>We can sample uniform random numbers from <code>Interval</code>s:</p><pre><code class="language-julia">julia&gt; i = Interval(2,4,true)
+[0,1]</code></pre><h3><a class="nav-anchor" id="Sampling-1" href="#Sampling-1">Sampling</a></h3><p>We can sample uniform random numbers from <code>Intervals</code>:</p><pre><code class="language-julia">julia&gt; i = Interval(2,4,true)
 [2,4[
 julia&gt; sample(i)
 3.935796996224805
@@ -89,7 +89,7 @@ julia&gt; sample(i,4)
  5.543827369817867 
  4.678054798740224 
  3.1740822420010355
- 3.6870186624440504</code></pre><h3><a class="nav-anchor" id="Similarity-metrics-1" href="#Similarity-metrics-1">Similarity metrics</a></h3><p>Finally, we can compare two <code>Interval</code>s with different metrics:</p><ul><li><p>Jaccard coefficient:  $ J(X,Y)=\frac{\left| X \cap Y \right|}{\left| X \cup Y \right|} $</p></li><li><p>Overlap coefficient: $ O\left(X,Y\right)=\frac{\left| X \cap Y \right|}{min\left( \left|X\right|,\left|Y\right| \right)} $</p></li><li><p>Dice coefficient: $ D\left(X,Y\right)=\frac{2\left| X \cap Y \right|}{\left|X\right|+\left|Y\right|} $</p></li></ul><pre><code class="language-julia">julia&gt; i = Interval(3,true,6)
+ 3.6870186624440504</code></pre><h3><a class="nav-anchor" id="Similarity-metrics-1" href="#Similarity-metrics-1">Similarity metrics</a></h3><p>Finally, we can compare two <code>Intervals</code> with different metrics:</p><ul><li><p>Jaccard coefficient:  $ J(X,Y)=\frac{\left| X \cap Y \right|}{\left| X \cup Y \right|} $</p></li><li><p>Overlap coefficient: $ O\left(X,Y\right)=\frac{\left| X \cap Y \right|}{min\left( \left|X\right|,\left|Y\right| \right)} $</p></li><li><p>Dice coefficient: $ D\left(X,Y\right)=\frac{2\left| X \cap Y \right|}{\left|X\right|+\left|Y\right|} $</p></li></ul><pre><code class="language-julia">julia&gt; i = Interval(3,true,6)
 ]3,6]
 julia&gt; j = Interval(4,7)
 [4,7]
