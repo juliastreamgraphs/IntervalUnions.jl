@@ -1,6 +1,6 @@
 # Intervals
 
-The type `Interval` implements a basic interval of real numbers like `[0,1]` or `]2.1,3.14]`. The following section gives some basic examples of operations on `Interval`s. Note that unions of disjoint `Interval`s cannot be computed and will throw an error. To work with disjoint intervals, use `IntervalUnions` instead. 
+The type `Interval` implements a basic interval of real numbers like `[0,1]` or `]2.1,3.14]`. The following section gives some basic examples of operations on `Intervals`. Note that unions of disjoint `Intervals` cannot be computed and will throw an error. To work with disjoint intervals, use `IntervalUnions` instead. 
 
 ## Example Usage
 
@@ -19,7 +19,7 @@ julia> l = Interval(1.6,true,2.3,true)
 ]1.6,2.3[
 ```
 
-Since `Interval`s are most of the time closed on both side, a simplified constructor can be used as a shortcut:
+Since `Intervals` are most of the time closed on both side, a simplified constructor can be used as a shortcut:
 
 ```julia
 julia> i = Interval(0,1)
@@ -41,7 +41,7 @@ julia> k = Interval(2,false,3,true)
 [2,3[
 ```
 
-Finally, the empty interval can be constructed with no argument:
+Finally, the empty `Interval` can be constructed with no argument:
 
 ```julia
 julia> m = Interval()
@@ -50,7 +50,7 @@ julia> m = Interval()
 
 ### Basic queries
 
-Once an `Interval` is built, one has access to very simple queries to inspect the interval:
+Once an `Interval` is built, one has access to very simple queries:
 
 ```julia
 julia> i = Interval(0,2)
@@ -73,7 +73,7 @@ julia> cardinal(Interval())
 
 ### Order
 
-`Interval`s implement a lexicographical order:
+`Intervals` implement a lexicographical order:
 
 ```julia
 julia> Interval(0,2) < Interval(1,2,true)
@@ -86,7 +86,7 @@ true
 
 ### Inclusivity
 
-It is possible to check if a given number belongs to an interval:
+It is possible to check if a given number belongs to an `Interval`:
 
 ```julia
 julia> i = Interval(0,1)
@@ -103,7 +103,7 @@ julia> 0.99999999 in j
 true
 ```
 
-It is also possible to check if an interval is included in another one:
+It is also possible to check if an `Interval` is included in another one:
 
 ```julia
 julia> i = Interval(0,1)
@@ -116,7 +116,7 @@ julia> i ⊆ j
 false
 ```
 
-Or if two intervals are disjoint:
+Or if two `Intervals` are disjoint:
 
 ```julia
 julia> i = Interval(0,1,true)
@@ -133,7 +133,7 @@ false
 
 ### Intersection
 
-We can compute the intersection of two `Interval`s:
+We can compute the intersection of two `Intervals`:
 
 ```julia
 julia> i = Interval(0,1)
@@ -154,7 +154,7 @@ julia> intersect(i,Interval())
 
 ### Union
 
-We can compute theunion of two `Interval`s:
+We can compute the union of two `Intervals`:
 
 ```julia
 julia> i = Interval(0,1)
@@ -169,7 +169,7 @@ julia> i ∪ Interval()
 
 ### Sampling
 
-We can sample uniform random numbers from `Interval`s:
+We can sample uniform random numbers from `Intervals`:
 
 ```julia
 julia> i = Interval(2,4,true)
@@ -188,19 +188,17 @@ julia> sample(i,4)
 
 ### Similarity metrics
 
-Finally, we can compare two `Interval`s with different metrics:
+Finally, we can compare two `Intervals` with different metrics:
 
 - Jaccard coefficient: 
   $$
   J(X,Y)=\frac{\left| X \cap Y \right|}{\left| X \cup Y \right|}
   $$
-  
 
 - Overlap coefficient:
   $$
   O\left(X,Y\right)=\frac{\left| X \cap Y \right|}{min\left( \left|X\right|,\left|Y\right| \right)}
   $$
-  
 
 - Dice coefficient:
   $$
