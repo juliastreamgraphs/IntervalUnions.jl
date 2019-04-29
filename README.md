@@ -40,7 +40,7 @@ julia> cardinal(I)
 4
 julia> complement(I)
 ]-Inf,0[ ∪ ]1,2[ ∪ [4,4] ∪ [5,Inf[
-julia> J = IntervalUnion([Interval(0.5,true,4)])
+julia> J = IntervalUnion(0.5,true,4)
 ]0.5,4]
 julia> I ∪ J
 [0,5[

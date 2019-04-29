@@ -6,15 +6,17 @@ The type `IntervalUnion` implements unions of disjoint `Intervals` of real numbe
 
 ### Definition
 
-An `IntervalUnion` is simply an array of `Intervals`. The `Intervals` given to the constructor can be in any order and may overlap, they will be merged and ordered by the constructor:
+An `IntervalUnion` is simply an array of `Intervals`. The `Intervals` given to the constructor can be in any order and may overlap, they will be merged and ordered by the constructor. For `IntervalUnions` with only a single `Interval`, simplified constructors can be used to pass the `Interval` arguments directly:
 
 ```julia
-julia> i = IntervalUnion([Interval(0,1)])
+julia> i = IntervalUnion(0,1)
 [0,1]
 julia> j = IntervalUnion([Interval(0,1,true),Interval(1,true,3,true)])
 [0,1[ ∪ ]1,3[
 julia> k = IntervalUnion([Interval(4.3,true,5),Interval(0,1,true),Interval(-2,0.3,true),Interval(1,true,3,true)])
 [-2,1[ ∪ ]1,3[ ∪ ]4.3,5]
+julia> l = IntervalUnion(-2,true,2,true)
+]-2,2[
 ```
 
 As for `Intervals`, an empty union of `Intervals` can be created with:
@@ -127,15 +129,15 @@ julia> i ∪ IntervalUnion()
 It is possible to compute the complement of `IntervalUnions`:
 
 ```julia
-julia> i = IntervalUnion([Interval(0,1)])
+julia> i = IntervalUnion(0,1)
 [0,1]
 julia> complement(i)
 ]-Inf,0[ ∪ ]1,Inf[
-julia> j = IntervalUnion([Interval(0,0)])
+julia> j = IntervalUnion(0,0)
 [0,0]
 julia> complement(j)
 ]-Inf,0[ ∪ ]0,Inf[
-julia> k = IntervalUnion([Interval(0,true,0,true)])
+julia> k = IntervalUnion(0,true,0,true)
 ]0,0[
 julia> complement(k)
 ]-Inf,Inf[
