@@ -35,15 +35,35 @@ J = IntervalUnion([Interval(0,1),Interval(3,true,5)])
 
 # I = [0,1]
 I = IntervalUnion([Interval(0,1)])
+II = IntervalUnion(0,1)
+@test I == II 
 @test string(I) == "[0,1]"
+@test string(II) == "[0,1]"
 
 # J = ]1,2.5]
 J = IntervalUnion([Interval(1,true,2.5)])
+JJ = IntervalUnion(1,true,2.5)
+@test J == JJ
 @test string(J) == "]1,2.5]"
+@test string(JJ) == "]1,2.5]"
 
 # K = ]0,1[ ∪ ]1,2.6] ∪ [2.7,4]
 K = IntervalUnion([Interval(0,true,1,true),Interval(1,true,2.6),Interval(2.7,4)])
 @test string(K) == "]0,1[ ∪ ]1,2.6] ∪ [2.7,4]"
+
+# L = [-1,-0.998[
+L = IntervalUnion([Interval(-1,-0.998,true)])
+LL = IntervalUnion(-1,-0.998,true)
+@test L == LL
+@test string(L) == "[-1,-0.998["
+@test string(LL) == "[-1,-0.998["
+
+# L = ]-2.3,1.67[
+M = IntervalUnion([Interval(-2.3,true,1.67,true)])
+MM = IntervalUnion(-2.3,true,1.67,true)
+@test M == MM
+@test string(M) == "]-2.3,1.67["
+@test string(MM) == "]-2.3,1.67["
 
 # Tests for equality
 @test I == I

@@ -754,6 +754,64 @@ function IntervalUnion()
 end
 
 """
+	IntervalUnion(left,right)
+
+Simplified constructor for `IntervalUnions` with only one `Interval` closed on both side.
+Ex:
+```
+julia> i = IntervalUnion(2,3)
+[2,3]
+"""
+function IntervalUnion(left::Real, right::Real)
+	IntervalUnion([Interval(left,right)])
+end
+
+"""
+	IntervalUnion(left,open_left,right)
+
+Simplified constructor for `IntervalUnions` with only one `Interval` closed on the right side.
+Ex:
+```
+julia> i = IntervalUnion(2,true,3)
+]2,3]
+julia> i = IntervalUnion(2,false,3)
+[2,3]
+"""
+function IntervalUnion(left::Real, open_left::Bool, right::Real)
+	IntervalUnion([Interval(left,open_left,right)])
+end
+
+"""
+	IntervalUnion(left,right,open_right)
+
+Simplified constructor for `IntervalUnions` with only one `Interval` closed on the left side.
+Ex:
+```
+julia> i = IntervalUnion(2,3,true)
+[2,3[
+julia> i = IntervalUnion(2,3,false)
+[2,3]
+"""
+function IntervalUnion(left::Real, right::Real, open_right::Bool)
+	IntervalUnion([Interval(left,right,open_right)])
+end
+
+"""
+	IntervalUnion(left,open_left,right,open_right)
+
+Simplified constructor for `IntervalUnions` with only one `Interval`.
+Ex:
+```
+julia> i = IntervalUnion(2,true,3,true)
+]2,3[
+julia> i = IntervalUnion(2,false,3,false)
+[2,3]
+"""
+function IntervalUnion(left::Real, open_left::Bool, right::Real, open_right::Bool)
+	IntervalUnion([Interval(left,open_left,right,open_right)])
+end
+
+"""
 	empty(iu)
 
 Returns true if the given `IntervalUnion` is empty.
